@@ -2,7 +2,6 @@ import React from "react";
 
 function Input({
   placeholder,
-  onChange,
   type,
   name,
   id,

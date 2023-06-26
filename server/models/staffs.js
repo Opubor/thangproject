@@ -2,11 +2,8 @@ const {Schema, default:mongoose} = require('mongoose')
 
 const StaffSchema = new Schema({
     name: String,
-    phonenumber: String,
     email: String,
-    role: String,
     uniqueid: String,
-    address: String,
     profilepic: String,
     password: String,
     company: String,

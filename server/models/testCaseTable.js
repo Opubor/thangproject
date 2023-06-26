@@ -8,6 +8,7 @@ const TestCaseTableSchema = new Schema({
     precondition: String,
     version: String,
     assignedfolderId: String,
+    testcases: [{type: Schema.Types.ObjectId, ref: 'TestCase'}],
 })
 
 const TestCaseTable = mongoose.model('TestCaseTable', TestCaseTableSchema)

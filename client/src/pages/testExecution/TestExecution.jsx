@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import DefaultLayout from "../../components/DefaultLayout";
 import pieChart from "../../assets/Group 26942.png";
 import pieChartDetails from "../../assets/Group 1000004469.png";
@@ -7,8 +7,56 @@ import folder from "../../assets/Vector (7).png";
 import dots from "../../assets/Vector (21).png";
 import editpenblack from "../../assets/editpenblack.png";
 import page from "../../assets/page.png";
+import BarChart from "../../components/charts/BarChart";
+import { useState } from "react";
+import LineChart from "../../components/charts/LineChart";
+import PieChart from "../../components/charts/PieChart";
+import axios from "../../sevices/axios";
 
 function TestExecution() {
+  const [testCase, setTestCase] = useState([]);
+  useEffect(() => {
+    function findOcc(arr, key) {
+      let arr2 = [];
+
+      arr.forEach((x) => {
+        // Checking if there is any object in arr2
+        // which contains the key value
+        if (
+          arr2.some((val) => {
+            return val[key] == x[key];
+          })
+        ) {
+          // If yes! then increase the occurrence by 1
+          arr2.forEach((k) => {
+            if (k[key] === x[key]) {
+              k["occurrence"]++;
+            }
+          });
+        } else {
+          // If not! Then create a new object initialize
+          // it with the present iteration key's value and
+          // set the occurrence to 1
+          let a = {};
+          a[key] = x[key];
+          a["occurrence"] = 1;
+          arr2.push(a);
+        }
+      });
+
+      return arr2;
+    }
+    axios
+      .get("/testexecution")
+      .then((response) => {
+        setTestCase(findOcc(response?.data, "status"));
+        console.log(findOcc(response?.data, "status"));
+      })
+      .catch((response) => {
+        console.log(response.data);
+      });
+  }, []);
+
   return (
     <DefaultLayout>
       <div className="xl:flex justify-center gap-6 p-4 pt-8 xl:pt-4">
@@ -33,10 +81,152 @@ function TestExecution() {
             </div>
             <div className="flex justify-center items-center gap-6 ">
               <div>
-                <img src={pieChart} />
+                <PieChart
+                  chartdata={{
+                    labels: testCase.map((data, i) => {
+                      return data.status;
+                    }),
+                    datasets: [
+                      {
+                        label: "Test Execution",
+                        data: testCase.map((data, i) => {
+                          return data.occurrence;
+                        }),
+                        backgroundColor: [
+                          "#EB7A12",
+                          "#DADADA",
+                          "#FF4C51",
+                          "#3A3541",
+                          "#56CA00",
+                          "#32BAFF",
+                        ],
+                        borderWidth: 0,
+                        Width: "20px",
+                      },
+                    ],
+                  }}
+                  opt={{
+                    responsive: true,
+                    radius: 140,
+                    plugins: {
+                      legend: {
+                        display: false,
+                        position: "right",
+                        usePointStyle: false,
+                        pointStyle: "circle",
+                      },
+                      title: {
+                        display: false,
+                        text: "Chart.js Pie Chart",
+                      },
+                    },
+                  }}
+                />
               </div>
               <div>
-                <img src={pieChartDetails} />
+                {/* <img src={pieChartDetails} /> */}
+                {testCase.map((data, i) => {
+                  return (
+                    <>
+                      <h1>{data.occurrence.length}</h1>
+                      <p className="font-bold" style={{ color: "#EB7A12" }}>
+                        {data.status === "Pending" && (
+                          <>
+                            <span
+                              className="p-2 w-12 h-12 rounded-full"
+                              style={{ backgroundColor: "#EB7A12" }}
+                            >
+                              {" "}
+                            </span>
+                            {data.occurrence}
+                            {"  "}
+                            {data.status}
+                          </>
+                        )}
+                      </p>
+
+                      <p className="font-bold" style={{ color: "#DADADA" }}>
+                        {data.status === "Blank" && (
+                          <>
+                            <span
+                              className="p-2 rounded-full"
+                              style={{ backgroundColor: "#DADADA" }}
+                            >
+                              {" "}
+                            </span>
+                            {data.occurrence}
+                            {"  "}
+                            {data.status}
+                          </>
+                        )}
+                      </p>
+
+                      <p className="font-bold" style={{ color: "#FF4C51" }}>
+                        {data.status === "False" && (
+                          <>
+                            <span
+                              className="p-2 rounded-full"
+                              style={{ backgroundColor: "#FF4C51" }}
+                            >
+                              {" "}
+                            </span>
+                            {data.occurrence}
+                            {"  "}
+                            {data.status}
+                          </>
+                        )}
+                      </p>
+
+                      <p className="font-bold" style={{ color: "#3A3541" }}>
+                        {data.status === "Cancel" && (
+                          <>
+                            <span
+                              className="p-2 rounded-full"
+                              style={{ backgroundColor: "#3A3541" }}
+                            >
+                              {" "}
+                            </span>
+                            {data.occurrence}
+                            {"  "}
+                            {data.status}
+                          </>
+                        )}
+                      </p>
+
+                      <p className="font-bold" style={{ color: "#56CA00" }}>
+                        {data.status === "Pass" && (
+                          <>
+                            <span
+                              className="p-2 rounded-full"
+                              style={{ backgroundColor: "#56CA00" }}
+                            >
+                              {" "}
+                            </span>
+                            {data.occurrence}
+                            {"  "}
+                            {data.status}
+                          </>
+                        )}
+                      </p>
+
+                      <p className="font-bold" style={{ color: "#32BAFF" }}>
+                        {data.status === "Block" && (
+                          <>
+                            <span
+                              className="w-6 h-6 p-2 rounded-full"
+                              style={{ backgroundColor: "#32BAFF" }}
+                            >
+                              {" "}
+                            </span>
+                            {data.occurrence}
+                            {"  "}
+                            {data.status}
+                          </>
+                        )}
+                      </p>
+                    </>
+                  );
+                })}
               </div>
             </div>
           </div>

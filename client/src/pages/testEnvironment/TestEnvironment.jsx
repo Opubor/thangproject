@@ -140,7 +140,10 @@ function TestEnvironment() {
                   pageCount={pageCount}
                   handlePageClick={handlePageClick}
                 />
-                <TotalNo totalnumber={testEnvironmentData?.length} />
+                <TotalNo
+                  tablename={"Test Environments"}
+                  totalnumber={testEnvironmentData?.length}
+                />
               </div>
             </div>
 
@@ -223,6 +226,7 @@ function TestEnvironment() {
                     name="description"
                     onchange={handleChange}
                     value={testEnvironment?.description}
+                    rows={"4"}
                   />
                   <p className="text-gray-400 text-sm">
                     Describe your variable
