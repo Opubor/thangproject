@@ -1,7 +1,14 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 
-const Tabs = ({ tab2Display, tab1Display, tab1Tag, tab2Tag }) => {
+const Tabs = ({
+  tab2Display,
+  tab1Display,
+  tab1Tag,
+  tab2Tag,
+  tab3Tag,
+  tab3Display,
+}) => {
   const [openTab, setOpenTab] = useState(1);
 
   const activeClasses = "text-blue-900 border-b-2 border-b-blue-900 ";
@@ -17,6 +24,11 @@ const Tabs = ({ tab2Display, tab1Display, tab1Tag, tab2Tag }) => {
       id: 2,
       title: tab2Tag,
       content: tab2Display,
+    },
+    {
+      id: 3,
+      title: tab3Tag,
+      content: tab3Display,
     },
   ];
 

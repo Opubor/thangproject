@@ -14,10 +14,23 @@ async function connectDB() {
         // Extract collection names from the result
         const collectionNames = collections.map((collection) => collection.name);
         console.log('Collections:', collectionNames);
-        // console.log('Hello')
+        console.log('Db connected successfully')
     } catch (err) {
         console.log('Database Connection Error: ', err);
     }
 }
 
 module.exports = connectDB
+// const mongoose = require ('mongoose')
+
+// async function connectDB(){
+//     try {
+//         // Add your database URL here EXAMPLE
+//         return await mongoose.connect('mongodb://localhost:27017/thangmanagement')
+//         // return await mongoose.connect(process.env.MONGO_URI)
+//     } catch (err) {
+//         console.log('Database Connection Error: ', err)
+//     }
+// }
+
+// module.exports = connectDB

@@ -29,22 +29,24 @@ function Navbar({ children }) {
     { name: "Setting", link: "/profile", icon: settingsicon },
   ];
   return (
-    <div className="w-full xl:w-10/12 bg-themegray mt-4 xl:ml-72">
-      <div className="max-w-full overflow-x-auto px-4 xl:px-16 bg-white fixed xl:left-72 left-0 right-0 rounded flex justify-between items-center gap-4 xl:gap-12">
-        {menus?.map((menu, i) => (
-          <NavLink
-            to={menu?.link}
-            key={i}
-            className={({ isActive }) =>
-              isActive
-                ? "group flex items-center text-sm gap-2 p-2 text-blue-900 hover:text-gray-400 border-b-2 border-b-blue-900 font-bold"
-                : "group flex items-center text-sm gap-2 p-2 text-textgray font-semibold hover:text-blue-900 transition-0.5"
-            }
-          >
-            <img src={menu?.icon} />
-            <h2>{menu?.name}</h2>
-          </NavLink>
-        ))}
+    <div className="w-full xl:w-10/12 xl:ml-72">
+      <div className="bg-themegray w-12/12 fixed xl:left-72 xl:right-0 left-0 right-0">
+        <div className="mt-4 mb-3 flex justify-between items-center gap-4 xl:gap-12 bg-white w-12/12 overflow-x-auto px-4 xl:px-16 xl:left-80 xl:right-0 left-0 right-0 rounded">
+          {menus?.map((menu, i) => (
+            <NavLink
+              to={menu?.link}
+              key={i}
+              className={({ isActive }) =>
+                isActive
+                  ? "group flex items-center text-sm gap-2 p-2 text-blue-900 hover:text-gray-400 border-b-2 border-b-blue-900 font-bold"
+                  : "group flex items-center text-sm gap-2 p-2 text-textgray font-semibold hover:text-blue-900 transition-0.5"
+              }
+            >
+              <img src={menu?.icon} />
+              <h2>{menu?.name}</h2>
+            </NavLink>
+          ))}
+        </div>
       </div>
       {/* =================CHILDREN================ */}
       <div className="bg-white rounded-sm" style={{ marginTop: "56px" }}>

@@ -6,20 +6,35 @@ import exportCylinders from "../../assets/database-export.png";
 import cancel from "../../assets/cancel.png";
 import deleteCircle from "../../assets/delete-circle.png";
 
-function TableFunctions({ search, setopenAddCaseModal }) {
+function TableFunctions({
+  search,
+  setopenAddCaseModal,
+  sortHigh,
+  sortMedium,
+  sortLow,
+}) {
   const [importExport, setImportExport] = useState(false);
   const [afterImportExport, setAfterImportExport] = useState(false);
+  const [openSort, setopenSort] = useState(false);
 
   return (
     <div className="bg-white">
-      <div className="flex justify-between items-center">
-        <div className="w-9/12">{search}</div>
+      <div className="flex flex-col justify-between items-end md:items-center md:flex-row">
+        <div className="w-full md:w-9/12">{search}</div>
 
-        <div className="flex items-center">
-          <div className="border border-gray-300 p-2 rounded-tl-lg rounded-bl-lg cursor-pointer hover:bg-gray-100">
-            <img src={addPage} onClick={setopenAddCaseModal} />
+        <div className="flex items-center mt-2 md:mt-0">
+          <div
+            className="border border-gray-300 p-2 rounded-tl-lg rounded-bl-lg cursor-pointer hover:bg-gray-100"
+            onClick={setopenAddCaseModal}
+          >
+            <img src={addPage} />
           </div>
-          <div className="border border-gray-300 p-2 cursor-pointer hover:bg-gray-100">
+          <div
+            className="border border-gray-300 p-2 cursor-pointer hover:bg-gray-100"
+            onClick={() => {
+              openSort === true ? setopenSort(false) : setopenSort(true);
+            }}
+          >
             <img src={sort} />
           </div>
           <div
@@ -56,6 +71,7 @@ function TableFunctions({ search, setopenAddCaseModal }) {
               </div>
             </div>
 
+            {/* ========Export======== */}
             <div
               className={`bg-white rounded-md shadow shadow-xl text-sm text-center fixed right-8 p-4 ${
                 afterImportExport ? "block" : "hidden"
@@ -75,6 +91,34 @@ function TableFunctions({ search, setopenAddCaseModal }) {
               <button className="flex items-center gap-2 text-lg font-semibold px-20 py-1 border-2 border-gray-500 text-gray-500 rounded-sm">
                 SVG <img src={deleteCircle} />
               </button>
+            </div>
+            {/* ========Sort======== */}
+            <div
+              className={`bg-white rounded-md shadow-xl text-sm text-center fixed right-8 p-4 ${
+                openSort ? "block" : "hidden"
+              }`}
+            >
+              <h1 className="font-semibold text-md mb-2">Sort: Priority</h1>
+              <div className="flex flex-col gap-2 w-44">
+                <h1
+                  className="border-2 border-gray-400 py-1 hover:bg-gray-100"
+                  onClick={sortHigh}
+                >
+                  High
+                </h1>
+                <h2
+                  className="border-2 border-gray-400 py-1 hover:bg-gray-100"
+                  onClick={sortMedium}
+                >
+                  Medium
+                </h2>
+                <h3
+                  className="border-2 border-gray-400 py-1 hover:bg-gray-100"
+                  onClick={sortLow}
+                >
+                  Low
+                </h3>
+              </div>
             </div>
           </div>
         </div>

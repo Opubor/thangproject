@@ -1,6 +1,8 @@
 var express = require('express');
 var router = express.Router();
 const TestEnvironment = require('../models/testEnvironment');
+const { testEnvironmentValidator } = require('../validators/validators');
+const createHttpError = require("http-errors");
 
 /**
  * @swagger
@@ -70,6 +72,8 @@ const TestEnvironment = require('../models/testEnvironment');
 router.post('/testenvironment', async function(req,res,next){
     try {
        const {operatingsystem, description, browser} = req.body
+       const {error} = testEnvironmentValidator.validate({operatingsystem, description, browser})
+       if (error) throw new createHttpError.BadRequest(error.details[0].message);
         await TestEnvironment.create({operatingsystem, description, browser});
         return res.status(200).send('Test environment created successfully')
     } catch (error) {
@@ -190,6 +194,8 @@ router.put('/testenvironment/:id', async function(req, res, next) {
     try {
         const{ operatingsystem, description, browser } = req.body
         const id = req.params.id
+        const {error} = testEnvironmentValidator.validate({operatingsystem, description, browser})
+        if (error) throw new createHttpError.BadRequest(error.details[0].message);
         await TestEnvironment.findByIdAndUpdate(id,{operatingsystem, description, browser})
         return res.status(200).send('Updated Successfully')
     } catch (error) {

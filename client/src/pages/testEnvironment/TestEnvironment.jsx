@@ -1,21 +1,18 @@
 import React, { useEffect, useState } from "react";
+import { Formik, Field, Form, ErrorMessage, useFormik } from "formik";
+import * as Yup from "yup";
 import DefaultLayout from "../../components/DefaultLayout";
-import filepic from "../../assets/Vector (7).png";
 import editpen from "../../assets/Vector (13).png";
 import deletecircle from "../../assets/delete-circle.png";
 import plusBlue from "../../assets/add-circle-blue.png";
-import cancel from "../../assets/cancel.png";
 import { Link } from "react-router-dom";
-import Input from "../../components/Input";
-import TextArea from "../../components/TextArea";
 import axios from "../../../src/sevices/axios";
 import { toast } from "react-toastify";
 import ButtonPreloader from "../../components/ButtonPreloader";
-import DeleteButton from "../../components/DeleteButton";
-import Modal from "../../components/Modal";
 import ReactPagination from "../../components/ReactPaginate";
 import TotalNo from "../../components/TotalNo";
 import SearchInput from "../../components/SearchInput";
+import AddTestEnvironment from "./AddTestEnvironment";
 
 function TestEnvironment() {
   const [loading, setLoading] = useState(false);
@@ -25,38 +22,6 @@ function TestEnvironment() {
   const [openAddEnv, setOpenAddEnv] = useState(false);
   const [testEnvironmentData, setTestEnvironmentData] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [testEnvironment, setTestEnvironment] = useState({
-    operatingsystem: "",
-    description: "",
-    browser: "",
-  });
-
-  function handleChange(e) {
-    setTestEnvironment((prev) => ({
-      ...prev,
-      [e.target.name]: e.target.value,
-    }));
-  }
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    setLoading(true);
-    axios
-      .post("/testenvironment", {
-        operatingsystem: testEnvironment?.operatingsystem,
-        description: testEnvironment?.description,
-        browser: testEnvironment?.browser,
-      })
-      .then((res) => {
-        toast.success(res.data);
-        setLoading(false);
-        window.location.reload(true);
-      })
-      .catch((err) => {
-        toast.error(err);
-        setLoading(false);
-      });
-  };
 
   function getTestEnvironments() {
     axios
@@ -97,7 +62,6 @@ function TestEnvironment() {
   };
 
   const handleDelete = () => {
-    console.log("delete");
     setLoading(true);
     axios.delete(`/testenvironment/${deleteId}`).then((res) => {
       getTestEnvironments();
@@ -132,7 +96,7 @@ function TestEnvironment() {
               </button>
             </div>
             <div className="flex justify-between items-center">
-              <div>
+              <div className="w-full pr-8">
                 <SearchInput onSearch={search} />
               </div>
               <div className="flex items-center gap-4">
@@ -194,70 +158,10 @@ function TestEnvironment() {
           </div>
 
           {/* ===========AddTestEnvironmentVariable========= */}
-          <div
-            className={`lg:mx-24 xl:mx-64 mt-4 xl:mt-0 px-12 flex flex-col justify-center items-center bg-white py-12 rounded-md ${
-              openAddEnv ? "block" : "hidden"
-            }`}
-          >
-            <h1 className="font-semibold text-2xl">Add Enviroment Variable</h1>
-            <h2 className="text-sm">
-              Create the enviroment variable first. Then combine multiple
-              variable values to create a configuration
-            </h2>
-
-            <div className="w-full">
-              <form onSubmit={handleSubmit}>
-                <div>
-                  <Input
-                    placeholder={"Windows"}
-                    label={"Operating System"}
-                    name={"operatingsystem"}
-                    type="text"
-                    onchange={handleChange}
-                  />
-                  <p className="text-gray-400 text-sm">
-                    set the name of the variable
-                  </p>
-                </div>
-
-                <div>
-                  <TextArea
-                    label={"Description"}
-                    name="description"
-                    onchange={handleChange}
-                    value={testEnvironment?.description}
-                    rows={"4"}
-                  />
-                  <p className="text-gray-400 text-sm">
-                    Describe your variable
-                  </p>
-                </div>
-
-                <div>
-                  <Input
-                    placeholder={"chrome"}
-                    label={"Browser"}
-                    name={"browser"}
-                    type="text"
-                    onchange={handleChange}
-                    value={testEnvironment?.browser}
-                  />
-                  <p className="text-gray-400 text-sm">Set the browser</p>
-                </div>
-                <div className="flex justify-end items-center gap-12 mt-4 text-sm">
-                  <h1
-                    className="bg-red-600 px-4 py-2 text-white rounded-sm hover:bg-red-700 cursor-pointer"
-                    onClick={() => setOpenAddEnv(false)}
-                  >
-                    Cancel
-                  </h1>
-                  <button className="bg-green-600 px-4 py-2 text-white rounded-sm hover:bg-green-900">
-                    {loading ? <ButtonPreloader /> : "Submit"}
-                  </button>
-                </div>
-              </form>
-            </div>
-          </div>
+          <AddTestEnvironment
+            styles={openAddEnv ? "block" : "hidden"}
+            setOpenAddEnv={() => setOpenAddEnv(false)}
+          />
         </div>
       </DefaultLayout>
 

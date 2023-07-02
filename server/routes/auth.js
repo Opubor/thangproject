@@ -3,13 +3,13 @@ var router = express.Router();
 const { Staffs } = require('../models/staffs');
 const jwt = require('jsonwebtoken')
 const createHttpError = require("http-errors");
-// const {loginValidator} = require('../validators/validators')
+const {loginValidator} = require('../validators/validators')
 
 router.post('/login', async function(req,res,next){
     try {
         const {email, password} = req.body
-        // const {error} =  loginValidator.validate({email,password})
-        // if (error) throw new createHttpError.BadRequest(error.details[0].message);
+        const {error} =  loginValidator.validate({email,password})
+        if (error) throw new createHttpError.BadRequest(error.details[0].message);
         // ============================================
         const user = await Staffs.findOne({email})
         if(!user || (user.password !== password)){

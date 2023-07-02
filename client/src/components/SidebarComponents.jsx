@@ -14,6 +14,7 @@ const SidebarComponents = ({ styles, setOpenRenameFolderModal }) => {
   let search = useLocation().search;
   const folderId = new URLSearchParams(search).get("folder");
   const tableId = new URLSearchParams(search).get("table");
+  const currentURL = window.location.href;
 
   const [openFolder, setOpenFolder] = useState(false);
   const [openedFolderId, setOpenedFolderId] = useState("");
@@ -21,6 +22,7 @@ const SidebarComponents = ({ styles, setOpenRenameFolderModal }) => {
   const [renameDelete, setRenameDelete] = useState(false);
   const [renameDeleteId, setRenameDeleteId] = useState("");
   const [folders, setFolders] = useState([]);
+  const [testExecURL, settestExecURL] = useState("");
 
   function getFolders() {
     axios
@@ -38,7 +40,8 @@ const SidebarComponents = ({ styles, setOpenRenameFolderModal }) => {
     if (tableId) {
       setOpenedTableId(tableId);
     }
-  }, [tableId]);
+    settestExecURL(currentURL.toString().includes("test_execution"));
+  }, [tableId, currentURL]);
 
   return (
     <>
@@ -46,7 +49,11 @@ const SidebarComponents = ({ styles, setOpenRenameFolderModal }) => {
         return (
           <div key={i}>
             <Link
-              to={`/test_management?folder=${data._id}`}
+              to={
+                testExecURL === true
+                  ? `/test_execution?folder=${data._id}`
+                  : `/test_management?folder=${data._id}`
+              }
               className={`flex justify-between items-center mt-6 text-textdark p-2 font-semibold cursor-pointer ${
                 openedFolderId === data._id
                   ? "bg-gray-300 text-black shadow shadow-sm"
@@ -84,12 +91,17 @@ const SidebarComponents = ({ styles, setOpenRenameFolderModal }) => {
                 openedFolderId === data?._id ? "block" : "hidden"
               } px-4`}
             >
-              <p>
+              <div className="max-h-24 overflow-y-auto">
                 {data?.testtables.map((data, i) => {
                   return (
                     <Link
-                      to={`/test_management?folder=${openedFolderId}&table=${data._id}`}
-                      className={`flex items-center gap-2 py-2 ${
+                      key={i}
+                      to={
+                        testExecURL === true
+                          ? `/test_execution?folder=${openedFolderId}&table=${data._id}`
+                          : `/test_management?folder=${openedFolderId}&table=${data._id}`
+                      }
+                      className={`flex items-center gap-2 py-2 max-h-8 ${
                         openedTableId === data._id
                           ? "bg-blue-500 text-black shadow shadow-sm"
                           : ""
@@ -97,12 +109,13 @@ const SidebarComponents = ({ styles, setOpenRenameFolderModal }) => {
                       onClick={() => setOpenedTableId(data._id)}
                     >
                       <img src={addPage} />
-                      <p>{data?.tablename}</p>
+                      <span>{data?.tablename}</span>
                     </Link>
                   );
                 })}
-              </p>
+              </div>
             </div>
+            {/* ===============RENAME AND DELETE FOLDER=============== */}
             <div
               className={`bg-gray-200 rounded-xl shadow shadow-lg text-sm text-center fixed left-56 w-32 -translate-y-4 z-50 ${
                 renameDeleteId === data?._id ? "block" : "hidden"

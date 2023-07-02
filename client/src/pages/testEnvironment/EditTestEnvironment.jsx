@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Formik, Field, Form, ErrorMessage, useFormik } from "formik";
+import * as Yup from "yup";
 import ButtonPreloader from "../../components/ButtonPreloader";
 import DefaultLayout from "../../components/DefaultLayout";
 import Input from "../../components/Input";
@@ -10,19 +12,8 @@ import { toast } from "react-toastify";
 function EditTestEnvironment() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
-  const [testEnvironment, setTestEnvironment] = useState({
-    operatingsystem: "",
-    description: "",
-    browser: "",
-  });
+  const [testEnvironment, setTestEnvironment] = useState([]);
 
-  const handleChange = (event) => {
-    const { name, value } = event.target;
-    setTestEnvironment((prevState) => ({
-      ...prevState,
-      [name]: value,
-    }));
-  };
   // Getting Query From URL
   let search = useLocation().search;
   const id = new URLSearchParams(search).get("edit");
@@ -34,14 +25,13 @@ function EditTestEnvironment() {
     });
   }, []);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const handleSubmit = (values, actions) => {
     setLoading(true);
     axios
       .put(`/testenvironment/${id}`, {
-        operatingsystem: testEnvironment?.operatingsystem,
-        description: testEnvironment?.description,
-        browser: testEnvironment?.browser,
+        operatingsystem: values?.operatingsystem,
+        description: values?.description,
+        browser: values?.browser,
       })
       .then((res) => {
         toast.success(res.data);
@@ -52,6 +42,7 @@ function EditTestEnvironment() {
         toast.error(err);
         setLoading(false);
       });
+    actions.setSubmitting(false);
   };
 
   return (
@@ -67,54 +58,92 @@ function EditTestEnvironment() {
           </h2>
 
           <div className="w-full">
-            <form onSubmit={handleSubmit}>
-              <div>
-                <Input
-                  placeholder={"Windows"}
-                  label={"Operating System"}
-                  name={"operatingsystem"}
-                  type="text"
-                  onchange={handleChange}
-                  defaultValue={testEnvironment?.operatingsystem}
-                />
-                <p className="text-gray-400 text-sm">
-                  set the name of the variable
-                </p>
-              </div>
+            <Formik
+              enableReinitialize={true}
+              initialValues={{
+                operatingsystem: testEnvironment?.operatingsystem,
+                description: testEnvironment?.description,
+                browser: testEnvironment?.browser,
+              }}
+              validationSchema={Yup.object().shape({
+                operatingsystem: Yup.string().required("Required field"),
+                description: Yup.string().required("Required field"),
+                browser: Yup.string().required("Required field"),
+              })}
+              onSubmit={handleSubmit}
+            >
+              <Form>
+                <div className="mt-4">
+                  <label className="font-semibold">Operating System</label>
+                  <Field
+                    className="block bg-gray-50 border border-gray-200 rounded-md p-2 w-full"
+                    placeholder={"Windows"}
+                    name={"operatingsystem"}
+                    type="text"
+                  />
+                  <ErrorMessage
+                    component="label"
+                    name="operatingsystem"
+                    className="text-sm text-red-500"
+                  />
+                  <p className="text-gray-400 text-sm">
+                    set the name of the variable
+                  </p>
+                </div>
 
-              <div>
-                <TextArea
-                  label={"Description"}
-                  name="description"
-                  onchange={handleChange}
-                  defaultValue={testEnvironment?.description}
-                />
-                <p className="text-gray-400 text-sm">Describe your variable</p>
-              </div>
+                <div className="mt-4">
+                  <label className="font-semibold">Description</label>
+                  <Field
+                    as="textarea"
+                    className="block border border-gray-200 rounded-md p-2 w-full"
+                    placeholder={"Description"}
+                    name={"description"}
+                    rows="4"
+                  />
+                  <ErrorMessage
+                    component="label"
+                    name="description"
+                    className="text-sm text-red-500"
+                  />
+                  <p className="text-gray-400 text-sm">
+                    Describe your variable
+                  </p>
+                </div>
 
-              <div>
-                <Input
-                  placeholder={"chrome"}
-                  label={"Browser"}
-                  name={"browser"}
-                  type="text"
-                  onchange={handleChange}
-                  defaultValue={testEnvironment?.browser}
-                />
-                <p className="text-gray-400 text-sm">Set the browser</p>
-              </div>
-              <div className="flex justify-end items-center gap-12 mt-4 text-sm">
-                <Link
-                  to={"/test_environment"}
-                  className="bg-red-600 px-4 py-2 text-white rounded-sm hover:bg-red-700 cursor-pointer"
-                >
-                  Cancel
-                </Link>
-                <button className="bg-green-600 px-4 py-2 text-white rounded-sm hover:bg-green-900">
-                  {loading ? <ButtonPreloader /> : "Submit"}
-                </button>
-              </div>
-            </form>
+                <div className="mt-4">
+                  <label className="font-semibold">Browser</label>
+                  <Field
+                    className="block bg-gray-50 border border-gray-200 rounded-md p-2 w-full"
+                    placeholder={"chrome"}
+                    name={"browser"}
+                    type="text"
+                  />
+                  <ErrorMessage
+                    component="label"
+                    name="browser"
+                    className="text-sm text-red-500"
+                  />
+                  <p className="text-gray-400 text-sm">
+                    set the name of the variable
+                  </p>
+                </div>
+
+                <div className="flex justify-end items-center gap-12 mt-4 text-sm">
+                  <Link
+                    to={"/test_environment"}
+                    className="bg-red-600 px-4 py-2 text-white rounded-sm hover:bg-red-700 cursor-pointer"
+                  >
+                    Cancel
+                  </Link>
+                  <button
+                    className="bg-green-600 px-4 py-2 text-white rounded-sm hover:bg-green-900"
+                    type="submit"
+                  >
+                    {loading ? <ButtonPreloader /> : "Submit"}
+                  </button>
+                </div>
+              </Form>
+            </Formik>
           </div>
         </div>
       </div>

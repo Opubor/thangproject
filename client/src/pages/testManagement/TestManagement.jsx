@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
-
-import { useLocation, Link } from "react-router-dom";
+import { useLocation, Link, useNavigate } from "react-router-dom";
 import DefaultLayout from "../../components/DefaultLayout";
 import FourTabs from "../../components/FourTabs";
 import clipBoard from "../../assets/paste-clipboard.png";
@@ -14,11 +13,17 @@ import DeleteFolder from "../../components/folders/DeleteFolder";
 import TableFunctions from "../../components/table/TableFunctions";
 import { toast } from "react-toastify";
 import EditTestCase from "./EditTestCase";
+import ButtonPreloader from "../../components/ButtonPreloader";
+import DeleteTestCase from "./DeleteTestCase";
 
 function TestManagement() {
+  const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
   const [openAddCaseModal, setopenAddCaseModal] = useState(false);
   const [openAddTestCaseModal, setopenAddTestCaseModal] = useState(false);
   const [OpenEditModal, setsetOpenEditModal] = useState(false);
+  const [OpenDeleteModal, setOpenDeleteModal] = useState(false);
+  const [testCaseTable, setTestCaseTable] = useState([]);
 
   // Getting Query From URL
   let search = useLocation().search;
@@ -27,44 +32,25 @@ function TestManagement() {
   const caseId = new URLSearchParams(search).get("caseId");
   const renamefolder = new URLSearchParams(search).get("renamefolder");
   const deletefolder = new URLSearchParams(search).get("deletefolder");
+  const deleteCase = new URLSearchParams(search).get("deleteCase");
 
   return (
     <>
       <DefaultLayout>
-        <div className="p-4 lg:h-screen">
+        <div className="p-4 mt-24 md:mt-12 lg:h-screen">
           {folderId ? (
             <>
               {/* ==================BreadCrumb=================== */}
-              <div className="flex items-center gap-2 mb-4">
-                <h1 className="text-sm flex items-center gap-1">
-                  <img src={clipBoard} /> Test Execution/{" "}
-                </h1>
-                <h1 className="text-sm flex items-center gap-1">
-                  <img src={folder} className="w-4 bg-gray-300" /> Folder 1/{" "}
-                </h1>
-                <h1 className="text-sm flex items-center gap-1">
-                  <img src={page} /> File 1
-                </h1>
-              </div>
-              {/* ========Table Functions========= */}
-              <TableFunctions
-                search={
-                  <form>
-                    <input
-                      type="search"
-                      className="px-4 py-2 rounded-md border border-gray-300 w-full focus:outline-none"
-                      placeholder="Search"
-                    />
-                  </form>
-                }
-                setopenAddCaseModal={() => setopenAddCaseModal(true)}
-              />
+
               {/* =========Main Table======== */}
 
               <FourTabs
                 to={`/test_management?folder=${folderId}`}
                 testCaseTableFunction={() => setopenAddTestCaseModal(true)}
                 setOpenEditModal={() => setsetOpenEditModal(true)}
+                setOpenDeleteModal={() => setOpenDeleteModal(true)}
+                testCaseTable={testCaseTable}
+                setopenAddCaseModal={() => setopenAddCaseModal(true)}
               />
             </>
           ) : (
@@ -93,7 +79,18 @@ function TestManagement() {
       {deletefolder && (
         <DeleteFolder styles={deletefolder ? "flex" : "hidden"} />
       )}
-      <EditTestCase styles={OpenEditModal ? "flex" : "hidden"} />
+      <EditTestCase
+        styles={OpenEditModal ? "flex" : "hidden"}
+        setsetOpenEditModal={() => {
+          setsetOpenEditModal(false);
+        }}
+      />
+      <DeleteTestCase
+        styles={OpenDeleteModal ? "flex" : "hidden"}
+        setOpenDeleteModal={() => {
+          setOpenDeleteModal(false);
+        }}
+      />
     </>
   );
 }

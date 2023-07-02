@@ -7,6 +7,7 @@ const StaffSchema = new Schema({
     profilepic: String,
     password: String,
     company: String,
+    role: String,
 })
 
 async function getStaff(id){

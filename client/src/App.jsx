@@ -13,6 +13,7 @@ const ForgotPassword = React.lazy(() =>
 const ResetPassword = React.lazy(() =>
   import("./pages/authentication/ResetPassword")
 );
+const Redirect = React.lazy(() => import("./pages/authentication/Redirect"));
 const Dashboard = React.lazy(() => import("./pages/Dashboard"));
 const TestEnvironment = React.lazy(() =>
   import("./pages/testEnvironment/TestEnvironment")
@@ -41,6 +42,7 @@ function App() {
             <Route path="/register" element={<Register />} />
             <Route path="/forgotpassword" element={<ForgotPassword />} />
             <Route path="/resetpassword" element={<ResetPassword />} />
+            <Route path="/redirect" element={<Redirect />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/test_environment" element={<TestEnvironment />} />
             <Route path="/test_execution" element={<TestExecution />} />

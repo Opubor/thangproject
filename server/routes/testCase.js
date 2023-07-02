@@ -1,7 +1,10 @@
 var express = require('express');
+const Folders = require('../models/folders');
 var router = express.Router();
 const TestCase = require('../models/testCase');
 const TestCaseTable = require('../models/testCaseTable');
+const { testCaseValidator } = require('../validators/validators');
+const createHttpError = require("http-errors");
 
 /**
  * @swagger
@@ -118,17 +121,25 @@ const TestCaseTable = require('../models/testCaseTable');
 router.post('/testcase', async function(req,res,next){
     try {
        const {testcasetable,assignedfolderId ,priority, title, teststep,precondition, description, category, status, results, expectations, assignedstaff} = req.body
+    //    const {error} = testCaseValidator.validate({testcasetable,assignedfolderId ,priority, title, teststep,precondition, description, category, status, results, expectations, assignedstaff})
+    //    if (error) throw new createHttpError.BadRequest(error.details[0].message);
         let testcase = await TestCase.create({testcasetable,assignedfolderId ,priority, title, teststep,precondition, description, category, status, results, expectations, assignedstaff});
         let assignedtable = []
+        let assignedfolder = []
         if (testcasetable.match(/^[0-9a-fA-F]{24}$/)) {
             assignedtable = await TestCaseTable.findOne({_id: testcasetable})
         } 
-        if(assignedtable){
+        if (assignedfolderId.match(/^[0-9a-fA-F]{24}$/)) {
+            assignedfolder = await Folders.findOne({_id: assignedfolderId})
+        } 
+        if(assignedtable && assignedfolder){
             assignedtable.testcases.push(testcase)
             assignedtable.save()
+            assignedfolder.testcases.push(testcase)
+            assignedfolder.save()
             return res.status(200).send('Test case created successfully')
         }else{
-            return res.send('error')
+            return res.status(401).send("errror")
         }       
     } catch (error) {
        return res.status(401).send(error.message)
@@ -184,28 +195,44 @@ router.post('/testcase', async function(req,res,next){
 // READ_TEST-CASE : READ_TEST-CASE : READ_TEST-CASE : READ_TEST-CASE
 router.get('/testcase', async function(req,res,next){
     try {
-        const {edit,q,sortAsc,sortDsc} = req.query
+        const {edit,q,tableid,sortHigh,sortMedium,sortLow} = req.query
+        let populate = "testtable"
         if(edit){
-            let testCase = await TestCase.findById(edit)
+            let testCase = await TestCase.findById(edit).populate(populate)
             return res.json(testCase)
         }
-        if(sortAsc){
-            let testCase = await TestCase.find().sort({_id : sortAsc})
+        if(sortHigh){
+            let testCase = await TestCase.find({priority:"High"}).sort({_id : 'descending'}).populate(populate)
+            console.log(testCase)
             return res.json(testCase)
         }
-        if(sortDsc){
-            let testCase = await TestCase.find().sort({_id : sortDsc})
+        if(sortMedium){
+            let testCase = await TestCase.find({priority:"Medium"}).sort({_id : 'descending'}).populate(populate)
+            return res.json(testCase)
+        }
+        if(sortLow){
+            let testCase = await TestCase.find({priority:"Low"}).sort({_id : 'descending'}).populate(populate)
             return res.json(testCase)
         }
         
         if(q){
             var regex = new RegExp(q, "i")
-            let testCase = await TestCase.find({tablename:regex}).sort({_id : 'descending'})
+            let testCase = await TestCase.find({title:regex,testcasetable:tableid}).sort({_id : 'descending'}).populate(populate)
             return res.json(testCase)
         }else{
-            let testCase = await TestCase.find().sort({_id : 'descending'})
+            let testCase = await TestCase.find({testcasetable:tableid}).sort({_id : 'descending'}).populate(populate)
             return res.json(testCase)
         }
+    } catch (error) {
+        return res.status(401).send(error.message)
+    }
+})
+// GET ALL TEST CASES
+router.get('/alltestcase', async function(req,res,next){
+    try { 
+        let populate = "testtable"
+        let testCase = await TestCase.find().sort({_id : 'descending'}).populate(populate)
+        return res.json(testCase)
     } catch (error) {
         return res.status(401).send(error.message)
     }
@@ -249,6 +276,8 @@ router.put('/testcase/:id', async function(req, res, next) {
     try {
         const{ priority, title, teststep,precondition, description, category, status, results, expectations, assignedstaff, testcaseid } = req.body
         const id = req.params.id
+        // const {error} = testCaseValidator.validate({testcasetable,assignedfolderId ,priority, title, teststep,precondition, description, category, status, results, expectations, assignedstaff})
+        // if (error) throw new createHttpError.BadRequest(error.details[0].message);
         await TestCase.findByIdAndUpdate(id,{priority, title, teststep,precondition, description, category, status, results, expectations, assignedstaff, testcaseid})
         return res.status(200).send('Updated Successfully')
     } catch (error) {

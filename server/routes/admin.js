@@ -10,6 +10,7 @@ const { Staffs, getStaff } = require('../models/staffs');
 const createHttpError = require("http-errors");
 const TestCase = require('../models/testCase');
 const auth = require('../middlewares/auth');
+const {staffValidator} = require('../validators/validators');
 
 // USER-DETAILS : USER-DETAILS : USER-DETAILS : USER-DETAILS
 router.get('/me',auth, async function(req,res,next){
@@ -97,18 +98,20 @@ router.get('/me',auth, async function(req,res,next){
 // CREATE_STAFF : CREATE_STAFF : CREATE_STAFF : CREATE_STAFF
 router.post('/staff', async function(req,res,next){
     try {
-       const {name, email, company, password} = req.body
+       const {name, email, company, password, role} = req.body
+       const {error} = staffValidator.validate({name, email, company, password, role})
+       if (error) throw new createHttpError.BadRequest(error.details[0].message);
        const date = new Date();
        const uniqueid = date.getFullYear() + "-" + randomBytes(2).toString("hex")
        let usedEmail = await Staffs.findOne({email : email})
        if(usedEmail){
            return res.status(403).send('Email already in use')
        }else{
-           await Staffs.create({name, email, company, password, uniqueid});
+           await Staffs.create({name, email, company, password, uniqueid, role});
            return res.status(200).send('Staff created successfully')
        }
     } catch (error) {
-       return res.status(500).send("Server Error")
+       return res.status(500).send(error.message)
     }
 })
 
@@ -219,13 +222,47 @@ router.get('/staff', async function(req,res,next){
  *              description: Server Error
  */
 
+// FIRE-BASE : FIRE-BASE : FIRE-BASE : FIRE-BASE
+const firebaseConfig = {
+    apiKey: "AIzaSyAL6tFDnBhbOO7_ejvsOI1qlMR-fvl6g8o",
+    authDomain: "kalinga-23865.firebaseapp.com",
+    projectId: "kalinga-23865",
+    storageBucket: "kalinga-23865.appspot.com",
+    messagingSenderId: "922179444759",
+    appId: "1:922179444759:web:927b7b995c45e37d263c52",
+    measurementId: "G-GHJ3QSVJD8"
+  };
+initializeApp(firebaseConfig);
+const storage = getStorage();
+const upload = multer({storage: multer.memoryStorage()});
+
 // UPDATE_STAFF
 router.put('/staff/:id', async function(req, res, next) {
     try {
-        const{ name, phonenumber, email, role, address, password, company } = req.body
+        const{ name, email, company } = req.body
         const id = req.params.id
-        await Staffs.findByIdAndUpdate(id,{name, phonenumber, email, role, address, password, company})
-        return res.status(200).send('Updated Successfully')
+        await Staffs.findByIdAndUpdate(id,{name, email, company})
+        return res.status(200).send('Profile updated Successfully')
+    } catch (error) {
+        return res.status(401).send(error.message)
+    }
+});
+// UPDATE_STAFF
+router.put('/staffpic/:id',upload.single('profilepic'), async function(req, res, next) {
+    try {
+        const id = req.params.id
+        let x = req.file
+        if(x){
+            const storageRef = ref(storage, `files/${req.file.originalname + " " + id}`)
+            const metadata = {
+                contentType: req.file.mimetype
+            }
+            const snapshot = await uploadBytesResumable(storageRef, req.file.buffer, metadata);
+            const profilepic = await getDownloadURL(snapshot.ref)
+            await Staffs.findByIdAndUpdate(id,{profilepic})
+            console.log(req.file.originalname)
+            return res.status(200).send('Profile picture updated')
+        }
     } catch (error) {
         return res.status(401).send(error.message)
     }

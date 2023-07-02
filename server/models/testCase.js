@@ -13,7 +13,7 @@ const TestCaseSchema = new Schema({
     status: String,
     expectations: String,
     assignedstaff: String,
-    testcaseid: String,
+    testtable: [{type: Schema.Types.ObjectId, ref: 'TestCaseTable'}],
 })
 
 const TestCase = mongoose.model('TestCase', TestCaseSchema)

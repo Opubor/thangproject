@@ -1,6 +1,8 @@
 var express = require('express');
 var router = express.Router();
 const Folders = require('../models/folders');
+const { folderValidator } = require('../validators/validators');
+const createHttpError = require("http-errors");
 
 /**
  * @swagger
@@ -64,6 +66,8 @@ const Folders = require('../models/folders');
 router.post('/folder', async function(req,res,next){
     try {
        const {foldername} = req.body
+       const {error} = folderValidator.validate({foldername})
+        if (error) throw new createHttpError.BadRequest(error.details[0].message);
        let usedName = await Folders.findOne({foldername : foldername})
         if(usedName){
             return res.status(403).send('Name already in use')
@@ -192,6 +196,8 @@ router.put('/folder/:id', async function(req, res, next) {
     try {
         const{ foldername } = req.body
         const id = req.params.id
+        const {error} = folderValidator.validate({foldername})
+        if (error) throw new createHttpError.BadRequest(error.details[0].message);
         let usedName = await Folders.findOne({foldername : foldername})
         if(usedName){
             return res.status(403).send('Name already in use')

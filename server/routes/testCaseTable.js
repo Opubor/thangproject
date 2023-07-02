@@ -2,6 +2,11 @@ var express = require('express');
 var router = express.Router();
 const Folders = require('../models/folders');
 const TestCaseTable = require('../models/testCaseTable');
+const { testCaseTableValidator } = require('../validators/validators');
+const createHttpError = require("http-errors");
+const multer  = require('multer')
+const {initializeApp}  = require('firebase/app')
+const {getStorage, ref, getDownloadURL, uploadBytesResumable}  = require('firebase/storage')
 
 /**
  * @swagger
@@ -89,12 +94,27 @@ const TestCaseTable = require('../models/testCaseTable');
  *      
  */
 
+// FIRE-BASE : FIRE-BASE : FIRE-BASE : FIRE-BASE
+const firebaseConfig = {
+    apiKey: "AIzaSyAL6tFDnBhbOO7_ejvsOI1qlMR-fvl6g8o",
+    authDomain: "kalinga-23865.firebaseapp.com",
+    projectId: "kalinga-23865",
+    storageBucket: "kalinga-23865.appspot.com",
+    messagingSenderId: "922179444759",
+    appId: "1:922179444759:web:927b7b995c45e37d263c52",
+    measurementId: "G-GHJ3QSVJD8"
+  };
+initializeApp(firebaseConfig);
+const storage = getStorage();
+const upload = multer({storage: multer.memoryStorage()});
+
 // CREATE_TESTCASE-TABLE : CREATE_TESTCASE-TABLE : CREATE_TESTCASE-TABLE : CREATE_TESTCASE-TABLE
 router.post('/testcasetable', async function(req,res,next){
     try {
        const {tablename,description,attachments,date,precondition,version,assignedfolderId} = req.body
+       const {error} = testCaseTableValidator.validate({tablename,description,attachments,date,precondition,version,assignedfolderId})
+       if (error) throw new createHttpError.BadRequest(error.details[0].message);
         let table = await TestCaseTable.create({tablename,description,attachments,date,precondition,version,assignedfolderId});
-        // return res.status(200).send('Test case Table created successfully')
         let assignedfolder = []
         if (assignedfolderId.match(/^[0-9a-fA-F]{24}$/)) {
             assignedfolder = await Folders.findOne({_id: assignedfolderId})
@@ -110,6 +130,25 @@ router.post('/testcasetable', async function(req,res,next){
        return res.status(401).send(error.message)
     }
 })
+// TESCASETABLE CSV
+router.put('/testcasetablecsv/:id',upload.single('testcasetablecsv'), async function(req, res, next) {
+    try {
+        const id = req.params.id
+        let x = req.file
+        if(x){
+            const storageRef = ref(storage, `files/${req.file.originalname + " " + id}`)
+            const metadata = {
+                contentType: req.file.mimetype
+            }
+            const snapshot = await uploadBytesResumable(storageRef, req.file.buffer, metadata);
+            const testcasetablecsv = await getDownloadURL(snapshot.ref)
+            await TestCaseTable.findByIdAndUpdate(id,{testcasetablecsv})
+            return res.status(200).send('Profile picture updated')
+        }
+    } catch (error) {
+        return res.status(401).send(error.message)
+    }
+});
 
 /**
  * @swagger
@@ -160,7 +199,7 @@ router.post('/testcasetable', async function(req,res,next){
 // READ_TESTCASE-TABLE : READ_TESTCASE-TABLE : READ_TESTCASE-TABLE : READ_TESTCASE-TABLE
 router.get('/testcasetable', async function(req,res,next){
     try {
-        const {edit,q,sortAsc,sortDsc} = req.query
+        const {edit,q,tableid,sortAsc,sortDsc} = req.query
         let populate = "testcases"
         if(edit){
             let testCaseTable = await TestCaseTable.findById(edit).populate(populate)
@@ -177,7 +216,8 @@ router.get('/testcasetable', async function(req,res,next){
         
         if(q){
             var regex = new RegExp(q, "i")
-            let testCaseTable = await TestCaseTable.find({filename:regex}).sort({_id : 'descending'}).populate(populate)
+            let testCaseTable = await TestCaseTable.find({_id:tableid}).sort({_id : 'descending'}).populate(populate)
+            console.log(testCaseTable)
             return res.json(testCaseTable)
         }else{
             let testCaseTable = await TestCaseTable.find().sort({_id : 'descending'}).populate(populate)
@@ -225,6 +265,8 @@ router.put('/testcasetable/:id', async function(req, res, next) {
     try {
         const{ tablename,description,attachments,date,precondition,version,assignedfolderId } = req.body
         const id = req.params.id
+        const {error} = testCaseTableValidator.validate({tablename,description,attachments,date,precondition,version,assignedfolderId})
+        if (error) throw new createHttpError.BadRequest(error.details[0].message);
         await TestCaseTable.findByIdAndUpdate(id,{tablename,description,attachments,date,precondition,version,assignedfolderId})
         return res.status(200).send('Updated Successfully')
     } catch (error) {
