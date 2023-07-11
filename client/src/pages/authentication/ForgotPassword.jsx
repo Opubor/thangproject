@@ -5,6 +5,7 @@ import ButtonPreloader from "../../components/ButtonPreloader";
 import axios from "../../../src/sevices/axios";
 import { toast } from "react-toastify";
 import { Link, useNavigate } from "react-router-dom";
+import logo from "../../assets//Group 26942.png";
 
 function ForgotPassword() {
   const navigate = useNavigate();
@@ -28,16 +29,23 @@ function ForgotPassword() {
   };
 
   return (
-    <div className="flex justify-center items-center h-screen bg-blue-300">
-      <div className="bg-white p-6 rounded-md">
-        <div className="mt-4">
-          <h1 className="font-bold text-2xl text-center">Forgot Password</h1>
-          <p>
-            Enter your email and we'll send you instructions to reset your{" "}
-            <br></br> password
+    <div className=" h-screen bg-white">
+      <div className="px-36 py-4 font-bold text-xl flex items-center">
+        <img className="w-8" src={logo} />
+        <h1>Test management</h1>
+      </div>
+      <div className="flex justify-between items-center px-56">
+        <div className="py-52">
+          <h1 className="font-bold text-5xl mb-5">Forgot Password?</h1>
+          <p className="font-semibold text-2xl mb-6">
+            Smart test management software
           </p>
+          <Link to={"/"} className="text-blue-900 text-sm font-semibold">
+            ~Back to Login~
+          </Link>
         </div>
-        <div className="mt-6">
+        <div className="w-96">
+          <h1 className="font-bold text-center text-2xl mb-4">Sign in</h1>
           <Formik
             initialValues={{
               email: "",
@@ -48,10 +56,9 @@ function ForgotPassword() {
             onSubmit={handleSubmit}
           >
             <Form>
-              <div>
-                <label className="font-semibold">Email</label>
+              <div className="">
                 <Field
-                  className="block bg-gray-50 border border-gray-200 rounded-md p-2 w-full"
+                  className="bg-slate-100 text-black rounded-md px-6 py-3 w-full text-sm focus:outline-blue-500"
                   placeholder={"Enter your email"}
                   name={"email"}
                   type="text"
@@ -64,16 +71,11 @@ function ForgotPassword() {
               </div>
 
               <button
-                className="bg-blue-500 py-2 text-white font-semibold w-full rounded-md mt-6"
+                className="bg-blue-500 py-3 text-white font-semibold w-full rounded-md mt-6 text-sm shadow shadow-2xl shadow-blue-900 hover:bg-blue-700"
                 type="submit"
               >
                 {loading ? <ButtonPreloader /> : "Submit"}
               </button>
-              <p className="text-center font-semibold mt-2">
-                <Link to="/" className="text-blue-900">
-                  {"<"} Back to login
-                </Link>
-              </p>
             </Form>
           </Formik>
         </div>

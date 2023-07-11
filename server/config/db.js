@@ -27,7 +27,6 @@ module.exports = connectDB
 //     try {
 //         // Add your database URL here EXAMPLE
 //         return await mongoose.connect('mongodb://localhost:27017/thangmanagement')
-//         // return await mongoose.connect(process.env.MONGO_URI)
 //     } catch (err) {
 //         console.log('Database Connection Error: ', err)
 //     }

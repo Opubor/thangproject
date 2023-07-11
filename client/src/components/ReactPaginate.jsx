@@ -18,7 +18,7 @@ function ReactPagination({ pageCount, handlePageClick }) {
         pageLinkClassName="bg-gray-100 px-2 hover:bg-primary"
         previousLinkClassName="px-2"
         nextLinkClassName="px-2"
-        activeLinkClassName="bg-indigo-900 rounded-sm font-bold text-white dark:text-white"
+        activeLinkClassName="bg-indigo-900 text-white dark:text-white"
       />
     </>
   );

@@ -112,8 +112,10 @@ const upload = multer({storage: multer.memoryStorage()});
 router.post('/testcasetable', async function(req,res,next){
     try {
        const {tablename,description,attachments,date,precondition,version,assignedfolderId} = req.body
+    //    error checking
        const {error} = testCaseTableValidator.validate({tablename,description,attachments,date,precondition,version,assignedfolderId})
        if (error) throw new createHttpError.BadRequest(error.details[0].message);
+    //    ==============
         let table = await TestCaseTable.create({tablename,description,attachments,date,precondition,version,assignedfolderId});
         let assignedfolder = []
         if (assignedfolderId.match(/^[0-9a-fA-F]{24}$/)) {
@@ -265,8 +267,8 @@ router.put('/testcasetable/:id', async function(req, res, next) {
     try {
         const{ tablename,description,attachments,date,precondition,version,assignedfolderId } = req.body
         const id = req.params.id
-        const {error} = testCaseTableValidator.validate({tablename,description,attachments,date,precondition,version,assignedfolderId})
-        if (error) throw new createHttpError.BadRequest(error.details[0].message);
+        // const {error} = testCaseTableValidator.validate({tablename,description,attachments,date,precondition,version,assignedfolderId})
+        // if (error) throw new createHttpError.BadRequest(error.details[0].message);
         await TestCaseTable.findByIdAndUpdate(id,{tablename,description,attachments,date,precondition,version,assignedfolderId})
         return res.status(200).send('Updated Successfully')
     } catch (error) {

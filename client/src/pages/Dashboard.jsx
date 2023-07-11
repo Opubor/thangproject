@@ -97,7 +97,7 @@ function Dashboard() {
       return arr2;
     }
     axios
-      .get("/testexecution")
+      .get("/testexecutiondashboard")
       .then((response) => {
         setPieTestCase(findOcc(response?.data, "status"));
         console.log(findOcc(response?.data, "status"));
@@ -121,7 +121,7 @@ function Dashboard() {
     <DefaultLayout>
       {/* ==========Body========= */}
       {/* =========Dashboard Cards============ */}
-      <div className="bg-white px-4 pt-6">
+      <div className="bg-white px-4 pt-12 md:pt-8 lg:pt-6">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 lg:gap-8">
           <div className="w-full flex-col justify-center items-center w-4/12 bg-themegray py-6 rounded-xl shadow shadow-md">
             <div className="flex justify-center items-center gap-4">
@@ -167,10 +167,7 @@ function Dashboard() {
       <div className="bg-white mt-8 flex flex-col justify-between lg:flex-row gap-4 px-4">
         {/* ==========Column Chart========== */}
         <div className="w-full lg:w-8/12 p-4 h-80">
-          <h1 className="font-semibold text-xl mb-4">
-            Total of status case pass/fail
-          </h1>
-          {/* <img src={ColumnChart} /> */}
+          <h1 className="font-semibold text-xl mb-4">Total of status case</h1>
           <BarChart
             chartdata={{
               labels: pieTestCase.map((data, i) => {
@@ -182,15 +179,19 @@ function Dashboard() {
                   data: pieTestCase.map((data, i) => {
                     return data.occurrence;
                   }),
-                  backgroundColor: [
-                    "#EB7A12",
-                    "#DADADA",
-                    "#FF4C51",
-                    "#3A3541",
-                    "#56CA00",
-                    "#32BAFF",
-                    "#32BAGF",
-                  ],
+                  backgroundColor: pieTestCase.map((data, i) => {
+                    return data.status === "Pending"
+                      ? "#EB7A12"
+                      : data.status === "Blank"
+                      ? "#DADADA"
+                      : data.status === "False"
+                      ? "#FF4C51"
+                      : data.status === "Cancel"
+                      ? "#3A3541"
+                      : data.status === "Pass"
+                      ? "#56CA00"
+                      : data.status === "Block" && "#32BAFF";
+                  }),
                   borderWidth: 0,
                   Width: "20px",
                 },
@@ -237,11 +238,11 @@ function Dashboard() {
                   {data.testcases.map((dd, i) => {
                     return (
                       <>
-                        <div className="flex justify-between items-center">
+                        <div className="flex justify-between items-center px-8">
                           {dd?.status === "False" && (
                             <>
                               <p>{data?.tablename}</p>
-                              <p>{dd?.status}</p>
+                              <p className="pr-16">{dd?.status}</p>
                             </>
                           )}
                         </div>
@@ -252,25 +253,13 @@ function Dashboard() {
               </>
             );
           })}
-          {/* <div className="flex justify-between items-center border-b border-b-gray-300 px-8 mt-4 text-sm py-2">
-            <h1 className="text-textdark font-semibold w-full">File 5</h1>
-            <h2 className="text-textdark font-semibold w-full">150</h2>
-          </div>
-          <div className="flex justify-between items-center border-b border-b-gray-300 px-8 mt-4 text-sm py-2">
-            <h1 className="text-textdark font-semibold w-full">File 7</h1>
-            <h2 className="text-textdark font-semibold w-full">100</h2>
-          </div>
-          <div className="flex justify-between items-center border-b border-b-gray-300 px-8 mt-4 text-sm py-2">
-            <h1 className="text-textdark font-semibold w-full">File 13</h1>
-            <h2 className="text-textdark font-semibold w-full">10</h2>
-          </div> */}
         </div>
       </div>
 
       {/* ===============Test Repository Details/Total of status case/PIECHART============= */}
       <div className="bg-white mt-8 flex flex-col lg:flex-row justify-between gap-4 pb-8 px-4">
         {/* ==========Test Repository Details========== */}
-        <div className="w-full lg:w-8/12 p-4 h-80">
+        <div className="w-full lg:w-8/12 p-4 h-80 mb-12">
           <h1 className="font-semibold text-xl">Test Repository Details</h1>
           <table className="w-full text-left mt-6">
             <thead className="border-b-2">
@@ -299,17 +288,6 @@ function Dashboard() {
             />
             <TotalNo tablename={"Folders"} totalnumber={folders?.length} />
           </div>
-          {/* <div className="flex justify-end items-center gap-4 mt-2">
-            <div className="flex justify-center items-center gap-2">
-              <h1>Rows per page: 10</h1>
-              <img src={arrowdown} />
-            </div>
-            <h2>1-5 of 13</h2>
-            <div className="flex items-center gap-2">
-              <img src={leftArrow} />
-              <img src={rightArrow} />
-            </div>
-          </div> */}
         </div>
         {/* ========Total of status case/PIECHART========== */}
         <div className="w-full lg:w-4/12 rounded-3xl border-2 p-6">
@@ -327,15 +305,19 @@ function Dashboard() {
                       data: pieTestCase.map((data, i) => {
                         return data.occurrence;
                       }),
-                      backgroundColor: [
-                        "#EB7A12",
-                        "#DADADA",
-                        "#FF4C51",
-                        "#3A3541",
-                        "#56CA00",
-                        "#32BAFF",
-                        "#32BAGF",
-                      ],
+                      backgroundColor: pieTestCase.map((data, i) => {
+                        return data.status === "Pending"
+                          ? "#EB7A12"
+                          : data.status === "Blank"
+                          ? "#DADADA"
+                          : data.status === "False"
+                          ? "#FF4C51"
+                          : data.status === "Cancel"
+                          ? "#3A3541"
+                          : data.status === "Pass"
+                          ? "#56CA00"
+                          : data.status === "Block" && "#32BAFF";
+                      }),
                       borderWidth: 0,
                       Width: "20px",
                     },

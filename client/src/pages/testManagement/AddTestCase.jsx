@@ -10,6 +10,8 @@ function AddTestCase({ setopenAddCaseModal, styles, getTestCaseTable }) {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [testEnvironmentData, setTestEnvironmentData] = useState([]);
+  const [staffs, setStaffs] = useState([]);
+
   // Getting Query From URL
   let search = useLocation().search;
   const folderId = new URLSearchParams(search).get("folder");
@@ -27,8 +29,8 @@ function AddTestCase({ setopenAddCaseModal, styles, getTestCaseTable }) {
         status: values?.status,
         expectations: values?.expectations,
         assignedstaff: values?.assignedstaff,
-        testcasetable: tableId,
-        assignedfolderId: folderId,
+        testcasetable: tableId ? tableId : "",
+        assignedfolderId: folderId ? folderId : "",
       })
       .then((res) => {
         setLoading(false), setopenAddCaseModal(false);
@@ -40,7 +42,7 @@ function AddTestCase({ setopenAddCaseModal, styles, getTestCaseTable }) {
         window.location.reload(true);
       })
       .catch((err) => {
-        toast.error(err);
+        toast.error(err.response.data);
         setLoading(false);
       });
     actions.setSubmitting(false);
@@ -57,8 +59,20 @@ function AddTestCase({ setopenAddCaseModal, styles, getTestCaseTable }) {
       });
   }
 
+  function getStaffs() {
+    axios
+      .get("/staff")
+      .then((response) => {
+        setStaffs(response?.data);
+      })
+      .catch((response) => {
+        console.log(response.data);
+      });
+  }
+
   useEffect(() => {
     getTestEnvironments();
+    getStaffs();
   }, []);
 
   return (
@@ -220,10 +234,19 @@ function AddTestCase({ setopenAddCaseModal, styles, getTestCaseTable }) {
                 <div className="mt-4">
                   <label className="font-semibold">Assigned</label>
                   <Field
+                    as="select"
+                    name="assignedstaff"
                     className="block bg-gray-50 border border-gray-200 rounded-md p-2 w-full"
-                    name={"assignedstaff"}
-                    type="text"
-                  />
+                  >
+                    <option>Select staff</option>
+                    {staffs.map((data, i) => {
+                      return (
+                        <option value={data?._id} key={i}>
+                          {data?.name}
+                        </option>
+                      );
+                    })}
+                  </Field>
                   <ErrorMessage
                     component="label"
                     name="assignedstaff"

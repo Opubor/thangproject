@@ -5,6 +5,7 @@ import * as Yup from "yup";
 import axios from "../../sevices/axios";
 import { toast } from "react-toastify";
 import ButtonPreloader from "../../components/ButtonPreloader";
+import uilpadlock from "../../assets/uilpadlock.png";
 
 function EditTestCase({ styles, setsetOpenEditModal }) {
   const navigate = useNavigate();
@@ -13,16 +14,33 @@ function EditTestCase({ styles, setsetOpenEditModal }) {
   const folderId = new URLSearchParams(search).get("folder");
   const tableId = new URLSearchParams(search).get("table");
   const caseId = new URLSearchParams(search).get("caseId");
+  let currentCaseId = new URLSearchParams(search).get("id");
 
   const [loading, setLoading] = useState(false);
   const [testEnvironmentData, setTestEnvironmentData] = useState([]);
   const [testcase, setTestcase] = useState([]);
+  const [tablename, setTablename] = useState([]);
 
   function getTestEnvironments() {
     axios
       .get("/testenvironment")
       .then((response) => {
         setTestEnvironmentData(response?.data);
+      })
+      .catch((response) => {
+        console.log(response.data);
+      });
+  }
+
+  function getTestCaseTable() {
+    axios
+      .get("/testcasetable")
+      .then((response) => {
+        setTablename(
+          response?.data.map((data, i) => {
+            return <>{tableId === data._id && data?.tablename}</>;
+          })
+        );
       })
       .catch((response) => {
         console.log(response.data);
@@ -41,8 +59,8 @@ function EditTestCase({ styles, setsetOpenEditModal }) {
         status: values?.status,
         expectations: values?.expectations,
         assignedstaff: values?.assignedstaff,
-        testcasetable: tableId,
-        assignedfolderId: folderId,
+        testcasetable: tableId ? tableId : "",
+        assignedfolderId: folderId ? folderId : "",
       })
       .then((res) => {
         setLoading(false), setsetOpenEditModal(false);
@@ -60,13 +78,15 @@ function EditTestCase({ styles, setsetOpenEditModal }) {
   };
 
   useEffect(() => {
+    getTestCaseTable();
     if (caseId) {
       axios.get(`/testcase/?edit=${caseId}`).then((response) => {
         setTestcase(response.data);
+        console.log(response.data);
       });
     }
     getTestEnvironments();
-  }, [caseId]);
+  }, [caseId, tableId]);
 
   return (
     <div
@@ -75,7 +95,13 @@ function EditTestCase({ styles, setsetOpenEditModal }) {
       <div className="px-6 py-8 w-full md:w-8/12 lg:w-6/12 xl:w-4/12 bg-white">
         <div className="flex justify-between items-center text-xl font-semibold">
           <div className="flex justify-center items-center gap-4 text-xl text-textdark">
-            <p className="text-2xl">{"<"}</p>
+            <Link
+              to={`/test_management?folder=${folderId}&table=${tableId}`}
+              onClick={setsetOpenEditModal}
+              className="text-2xl"
+            >
+              {"<"}
+            </Link>
             <h1 className="flex items-center gap-2">{testcase?.title}</h1>
           </div>
         </div>
@@ -107,19 +133,18 @@ function EditTestCase({ styles, setsetOpenEditModal }) {
           <Form>
             <div className="border-b border-b-gray-400 flex justify-between items-center p-2 mt-8 text-sm">
               <label className="w-6/12">ID</label>
-              <input
-                className="w-6/12 border border-gray-400 px-2 py"
-                name={"testcaseid"}
-                type="text"
-                defaultValue={testcase?._id}
-              />
+              <h2 className="w-6/12 border border-gray-400 p-2">
+                {tablename}
+                {"-"}
+                {currentCaseId}
+              </h2>
             </div>
 
             <div className="border-b border-b-gray-400 flex justify-between items-center p-2 text-sm">
               <label className="w-6/12">Category</label>
               <div className="w-6/12 ">
                 <Field
-                  className="border border-gray-400 px-2 py block w-full"
+                  className="border border-gray-400 p-2 block w-full"
                   name={"category"}
                   type="text"
                 />
@@ -135,7 +160,7 @@ function EditTestCase({ styles, setsetOpenEditModal }) {
               <label className="w-6/12">Title</label>
               <div className="w-6/12 ">
                 <Field
-                  className="border border-gray-400 px-2 py block w-full"
+                  className="border border-gray-400 p-2 block w-full"
                   name={"title"}
                   type="text"
                 />
@@ -153,7 +178,7 @@ function EditTestCase({ styles, setsetOpenEditModal }) {
                 <Field
                   as="select"
                   name="priority"
-                  className="border border-gray-400 px-2 w-full mt"
+                  className="border border-gray-400 p-2 w-full mt"
                 >
                   <option value={testcase?.priority}>
                     {testcase?.priority}
@@ -191,7 +216,7 @@ function EditTestCase({ styles, setsetOpenEditModal }) {
                 <Field
                   as="select"
                   name="precondition"
-                  className="border border-gray-400 px-2 w-full mt"
+                  className="border border-gray-400 p-2 w-full mt"
                 >
                   <option value={testcase?.precondition}>
                     {testcase?.precondition}
@@ -248,7 +273,7 @@ function EditTestCase({ styles, setsetOpenEditModal }) {
 
             <div className="border-b border-b-gray-400 flex justify-between items-center p-2 text-sm">
               <label className="w-6/12">Status Case</label>
-              <p className="w-6/12 px-2 py">
+              <p className="w-6/12 px-2 py flex justify-between items-center">
                 {testcase?.status === "Cancel" && (
                   <span
                     className="w-24 text-center rounded-full text-white px-4 py-1"
@@ -297,27 +322,31 @@ function EditTestCase({ styles, setsetOpenEditModal }) {
                     {testcase?.status}
                   </span>
                 )}
+                <img src={uilpadlock} />
               </p>
             </div>
 
             <div className="border-b border-b-gray-400 flex justify-between items-center p-2 text-sm">
               <label className="w-6/12">Results</label>
-              <p className="w-6/12 border border-gray-400 px-2 py-4">
+              <p className="w-6/12 border border-gray-400 px-2 py-4 flex justify-between items-center">
                 {testcase?.results}
+                <img src={uilpadlock} />
               </p>
             </div>
 
             <div className="border-b border-b-gray-400 flex justify-between items-center p-2 text-sm">
               <label className="w-6/12">Description</label>
-              <p className="w-6/12 border border-gray-400 px-2 py-4">
+              <p className="w-6/12 border border-gray-400 px-2 py-4 flex justify-between items-center">
                 {testcase?.description}
+                <img src={uilpadlock} />
               </p>
             </div>
 
             <div className="border-b border-b-gray-400 flex justify-between items-center p-2 text-sm">
               <label className="w-6/12">Assigned</label>
-              <p className="w-6/12 border border-gray-400 px-2 py">
-                {testcase?.assignedstaff}
+              <p className="w-6/12 border border-gray-400 px-2 py flex justify-between items-center">
+                {testcase?.staff && testcase?.staff[0]?.name}
+                <img src={uilpadlock} />
               </p>
             </div>
 

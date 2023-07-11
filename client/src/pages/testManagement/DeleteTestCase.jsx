@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useLocation, Link, useNavigate } from "react-router-dom";
 import DefaultLayout from "../../components/DefaultLayout";
-import FourTabs from "../../components/FourTabs";
 import clipBoard from "../../assets/paste-clipboard.png";
 import folder from "../../assets/Vector (7).png";
 import page from "../../assets/page.png";

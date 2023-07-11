@@ -126,13 +126,13 @@ function Settings() {
   return (
     <>
       <DefaultLayout>
-        <div className="h-screen mt-16">
+        <div className="h-screen pt-8 lg:pt-2">
           <Tabs
             tab1Tag={"Account"}
             tab1Display={
               <div className="p-4 h-screen">
                 <img
-                  src={userData?.profilepic}
+                  src={userData?.profilepic ? userData?.profilepic : avatar}
                   alt="Profile Pic"
                   className="w-32 h-32 fixed"
                 />

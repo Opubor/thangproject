@@ -21,8 +21,12 @@ const SidebarComponents = ({ styles, setOpenRenameFolderModal }) => {
   const [openedTableId, setOpenedTableId] = useState("");
   const [renameDelete, setRenameDelete] = useState(false);
   const [renameDeleteId, setRenameDeleteId] = useState("");
+  const [openTableActions, setopenTableActions] = useState(false);
+  // const [OpenedTableId, setOpenedTableId] = useState("");
   const [folders, setFolders] = useState([]);
   const [testExecURL, settestExecURL] = useState("");
+  const [currentFolder, setCurrentFolder] = useState("");
+  const [currentTable, setCurrentTable] = useState("");
 
   function getFolders() {
     axios
@@ -35,12 +39,25 @@ const SidebarComponents = ({ styles, setOpenRenameFolderModal }) => {
       });
   }
 
+  // const [mouseCoordinates, setMouseCoordinates] = useState({ x: 0, y: 0 });
+
+  // const mouseMoveHandler = (event) => {
+  //   setMouseCoordinates({
+  //     x: event.clientX,
+  //     y: event.clientY,
+  //   });
+  // };
+
   useEffect(() => {
     getFolders();
     if (tableId) {
       setOpenedTableId(tableId);
     }
     settestExecURL(currentURL.toString().includes("test_execution"));
+    // window.addEventListener("mousemove", mouseMoveHandler);
+    // return () => {
+    //   window.removeEventListener("mousemove", mouseMoveHandler);
+    // };
   }, [tableId, currentURL]);
 
   return (
@@ -75,6 +92,7 @@ const SidebarComponents = ({ styles, setOpenRenameFolderModal }) => {
                 renameDeleteId === data?._id
                   ? setRenameDeleteId(null)
                   : setRenameDeleteId(data?._id);
+                setCurrentFolder(data?.foldername);
               }}
             >
               <div className={`flex items-center gap-2 `}>
@@ -94,53 +112,89 @@ const SidebarComponents = ({ styles, setOpenRenameFolderModal }) => {
               <div className="max-h-24 overflow-y-auto">
                 {data?.testtables.map((data, i) => {
                   return (
-                    <Link
-                      key={i}
-                      to={
-                        testExecURL === true
-                          ? `/test_execution?folder=${openedFolderId}&table=${data._id}`
-                          : `/test_management?folder=${openedFolderId}&table=${data._id}`
-                      }
-                      className={`flex items-center gap-2 py-2 max-h-8 ${
-                        openedTableId === data._id
-                          ? "bg-blue-500 text-black shadow shadow-sm"
-                          : ""
-                      }`}
-                      onClick={() => setOpenedTableId(data._id)}
-                    >
-                      <img src={addPage} />
-                      <span>{data?.tablename}</span>
-                    </Link>
+                    <>
+                      <Link
+                        key={i}
+                        to={
+                          testExecURL === true
+                            ? `/test_execution?folder=${openedFolderId}&table=${data._id}`
+                            : `/test_management?folder=${openedFolderId}&table=${data._id}`
+                        }
+                        className={`flex items-center gap-2 py-2 max-h-8 ${
+                          openedTableId === data._id
+                            ? "bg-blue-500 text-black shadow-sm"
+                            : ""
+                        }`}
+                        onClick={() => setOpenedTableId(data._id)}
+                        onContextMenu={(e) => {
+                          e.preventDefault();
+                          openTableActions === true
+                            ? setopenTableActions(false)
+                            : setopenTableActions(true);
+                          openedTableId === data?._id
+                            ? setOpenedTableId(null)
+                            : setOpenedTableId(data?._id);
+                          setCurrentTable(data?.tablename);
+                          setOpenedTableId(data._id);
+                        }}
+                      >
+                        <img src={addPage} />
+                        <span>{data?.tablename}</span>
+                      </Link>
+                    </>
                   );
                 })}
               </div>
             </div>
             {/* ===============RENAME AND DELETE FOLDER=============== */}
             <div
-              className={`bg-gray-200 rounded-xl shadow shadow-lg text-sm text-center fixed left-56 w-32 -translate-y-4 z-50 ${
+              className={`bg-gray-200 rounded-xl shadow-lg text-sm text-center fixed left-56 w-44 -translate-y-4 z-50 ${
                 renameDeleteId === data?._id ? "block" : "hidden"
               }`}
             >
               <div className="border-b border-b-gray-300 p-2 cursor-pointer hover:bg-gray-400 rounded-t-xl w-full">
                 <Link
-                  to={`/test_management?renamefolder=${data?._id}`}
+                  to={`/test_management?renamefolder=${data?._id}&folder=${currentFolder}`}
                   className="px-8"
                 >
-                  Rename
+                  Rename Folder
                 </Link>
               </div>
               <div className="hover:bg-gray-400 rounded-b-xl p-2">
                 <Link
-                  to={`/test_management?deletefolder=${data?._id}`}
+                  to={`/test_management?deletefolder=${data?._id}&folder=${currentFolder}`}
                   className="px-8"
                 >
-                  Delete
+                  Delete Folder
                 </Link>
               </div>
             </div>
           </div>
         );
       })}
+      {/* ===============RENAME AND DELETE TABLE=============== */}
+      <div
+        className={`bg-gray-200 rounded-xl shadow-lg text-sm text-center fixed left-56 w-40 -translate-y-4 z-50 ${
+          openTableActions ? "block" : "hidden"
+        }`}
+      >
+        <div className="border-b border-b-gray-300 p-2 cursor-pointer hover:bg-gray-400 rounded-t-xl w-full">
+          <Link
+            to={`/test_management?edit_table=${openedTableId}&table=${currentTable}`}
+            className="px-8"
+          >
+            Edit Table
+          </Link>
+        </div>
+        <div className="hover:bg-gray-400 rounded-b-xl p-2">
+          <Link
+            to={`/test_management?deletetable=${openedTableId}&table=${currentTable}`}
+            className="px-8"
+          >
+            Delete Table
+          </Link>
+        </div>
+      </div>
     </>
   );
 };

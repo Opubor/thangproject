@@ -3,14 +3,9 @@ import { Formik, Field, Form, ErrorMessage, useFormik } from "formik";
 import * as Yup from "yup";
 import DefaultLayout from "../../components/DefaultLayout";
 import plusBlue from "../../assets/add-circle-blue.png";
-import clipBoard from "../../assets/paste-clipboard.png";
-import folder from "../../assets/Vector (7).png";
 import dots from "../../assets/Vector (21).png";
 import editpenblack from "../../assets/editpenblack.png";
-import page from "../../assets/page.png";
-import BarChart from "../../components/charts/BarChart";
 import { useState } from "react";
-import LineChart from "../../components/charts/LineChart";
 import PieChart from "../../components/charts/PieChart";
 import axios from "../../sevices/axios";
 import { Link, useLocation } from "react-router-dom";
@@ -19,6 +14,7 @@ import { toast } from "react-toastify";
 import ReactPagination from "../../components/ReactPaginate";
 import TotalNo from "../../components/TotalNo";
 import BreadCrumb from "../../components/BreadCrumb";
+import uilpadlock from "../../assets/uilpadlock.png";
 
 function TestExecution() {
   // Getting Query From URL
@@ -38,6 +34,7 @@ function TestExecution() {
   const [tablename, setTablename] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [foldername, setFoldername] = useState([]);
+  const [staffs, setStaffs] = useState([]);
 
   function getTestCurrentCase() {
     if (caseId && uu) {
@@ -113,11 +110,23 @@ function TestExecution() {
     actions.setSubmitting(false);
   };
 
+  function getStaffs() {
+    axios
+      .get("/staff")
+      .then((response) => {
+        setStaffs(response?.data);
+      })
+      .catch((response) => {
+        console.log(response.data);
+      });
+  }
+
   useEffect(() => {
     getTestCaseTable();
     getTestCurrentCase();
     getTestCases();
     getFolders();
+    getStaffs();
     function findOcc(arr, key) {
       let arr2 = [];
 
@@ -149,7 +158,7 @@ function TestExecution() {
       return arr2;
     }
     axios
-      .get("/testexecution")
+      .get(`/testexecution?tableid=${tableId}`)
       .then((response) => {
         setPieTestCase(findOcc(response?.data, "status"));
       })
@@ -198,14 +207,20 @@ function TestExecution() {
                         data: pieTestCase.map((data, i) => {
                           return data.occurrence;
                         }),
-                        backgroundColor: [
-                          "#EB7A12",
-                          "#DADADA",
-                          "#FF4C51",
-                          "#3A3541",
-                          "#56CA00",
-                          "#32BAFF",
-                        ],
+                        backgroundColor: pieTestCase.map((data, i) => {
+                          return data.status === "Pending"
+                            ? "#EB7A12"
+                            : data.status === "Blank"
+                            ? "#DADADA"
+                            : data.status === "False"
+                            ? "#FF4C51"
+                            : data.status === "Cancel"
+                            ? "#3A3541"
+                            : data.status === "Pass"
+                            ? "#56CA00"
+                            : data.status === "Block" && "#32BAFF";
+                        }),
+
                         borderWidth: 0,
                         Width: "20px",
                       },
@@ -213,14 +228,18 @@ function TestExecution() {
                   }}
                   opt={{
                     responsive: true,
-                    radius: 120,
+                    radius: 100,
                     plugins: {
                       legend: {
-                        display: false,
+                        display: true,
                         position: "right",
-                        usePointStyle: false,
-                        pointStyle: "circle",
+                        labels: {
+                          usePointStyle: true,
+                          fontSize: 1,
+                          pointStyle: "circle",
+                        },
                       },
+
                       title: {
                         display: false,
                         text: "Chart.js Pie Chart",
@@ -229,7 +248,7 @@ function TestExecution() {
                   }}
                 />
               </div>
-              <div className="w-6/12">
+              {/* <div className="w-6/12">
                 {pieTestCase.map((data, i) => {
                   return (
                     <>
@@ -350,7 +369,7 @@ function TestExecution() {
                     </>
                   );
                 })}
-              </div>
+              </div> */}
             </div>
           </div>
 
@@ -572,7 +591,7 @@ function TestExecution() {
             <div className="border-b border-b-gray-400 flex justify-between items-center p-2 mt-8 text-sm">
               <label className="w-6/12">ID</label>
 
-              <h2 className="w-6/12 border border-gray-400 px-2 py">
+              <h2 className="w-6/12 border border-gray-400 p-2">
                 {tablename}
                 {"-"}
                 {currentCaseId}
@@ -581,21 +600,23 @@ function TestExecution() {
 
             <div className="border-b border-b-gray-400 flex justify-between items-center p-2 text-sm">
               <label className="w-6/12">Category</label>
-              <h2 className="w-6/12 border border-gray-400 px-2 py">
+              <h2 className="w-6/12 border border-gray-400 p-2 flex justify-between items-center">
                 {testcase?.category}
+                <img src={uilpadlock} />
               </h2>
             </div>
 
             <div className="border-b border-b-gray-400 flex justify-between items-center p-2 text-sm">
               <label className="w-6/12">Title</label>
-              <h2 className="w-6/12 border border-gray-400 px-2 py">
+              <h2 className="w-6/12 border border-gray-400 p-2 flex justify-between items-center">
                 {testcase?.title}
+                <img src={uilpadlock} />
               </h2>
             </div>
 
             <div className="border-b border-b-gray-400 flex justify-between items-center p-2 text-sm">
               <label className="w-6/12">Priority</label>
-              <div className="w-6/12 px-2 py">
+              <div className="w-6/12 p-2 flex justify-between items-center">
                 {testcase?.priority === "High" && (
                   <button className="bg-red-500 px-8 text-white py rounded-full">
                     High
@@ -611,13 +632,15 @@ function TestExecution() {
                     Low
                   </button>
                 )}
+                <img src={uilpadlock} />
               </div>
             </div>
 
             <div className="border-b border-b-gray-400 flex justify-between items-center p-2 text-sm">
               <label className="w-6/12">Precondition</label>
-              <h2 className="w-6/12 border border-gray-400 px-2 py">
+              <h2 className="w-6/12 border border-gray-400 p-2 flex justify-between items-center">
                 {testcase?.precondition}
+                <img src={uilpadlock} />
               </h2>
             </div>
 
@@ -625,18 +648,22 @@ function TestExecution() {
               <h1 className="w-6/12">Test Step</h1>
               <div className="w-6/12 border border-gray-400 px-2 py">
                 {testcase?.teststep?.split("\n").map((data, i) => (
-                  <div key={i} className="flex gap-2 text-sm">
+                  <div key={i} className="block text-sm">
                     <span>{i + 1}.</span>
                     <span>{data}</span>
                   </div>
                 ))}
+                <div className="flex justify-end">
+                  <img src={uilpadlock} />
+                </div>
               </div>
             </div>
 
             <div className="border-b border-b-gray-400 flex justify-between items-center p-2 text-sm">
               <label className="w-6/12">Expectation</label>
-              <h2 className="w-6/12 border border-gray-400 px-2 py">
+              <h2 className="w-6/12 border border-gray-400 p-2 flex justify-between items-center">
                 {testcase?.expectations}
+                <img src={uilpadlock} />
               </h2>
             </div>
 
@@ -663,7 +690,7 @@ function TestExecution() {
                     <Field
                       as="select"
                       name="status"
-                      className="border border-gray-400 px-2 w-full mt"
+                      className="border border-gray-400 p-2 w-full mt"
                     >
                       <option value={testcase?.status}>
                         {testcase?.status}
@@ -754,14 +781,22 @@ function TestExecution() {
                 </div>
 
                 <div className="border-b border-b-gray-400 flex justify-between items-center p-2 text-sm">
-                  <h1 className="w-6/12">Assigned</h1>
-
+                  <label className="w-6/12">Assigned</label>
                   <div className="flex-col w-6/12">
                     <Field
-                      className="border border-gray-400 px-2 py block w-full"
-                      name={"assignedstaff"}
-                      type="text"
-                    />
+                      as="select"
+                      name="assignedstaff"
+                      className="border border-gray-400 p-2 py block w-full"
+                    >
+                      <option value={staffs?._id}>{staffs?.name}</option>
+                      {staffs.map((data, i) => {
+                        return (
+                          <option value={data?._id} key={i}>
+                            {data?.name}
+                          </option>
+                        );
+                      })}
+                    </Field>
                     <ErrorMessage
                       component="label"
                       name="assignedstaff"

@@ -1,27 +1,27 @@
 import React, { useEffect, useState } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 import { Formik, Field, Form, ErrorMessage, useFormik } from "formik";
 import * as Yup from "yup";
-import { toast } from "react-toastify";
-import ButtonPreloader from "../ButtonPreloader";
-import Input from "../Input";
+import ButtonPreloader from "../../components/ButtonPreloader";
+import Input from "../../components/Input";
 import axios from "../../sevices/axios";
-import { Link, useLocation, useNavigate } from "react-router-dom";
 
-function RenameFolder({ styles }) {
+function EditTestCaseTable({ styles }) {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
-  const [folder, setFolder] = useState([]);
+  const [table, setTable] = useState([]);
 
   // Getting Query From URL
   let search = useLocation().search;
-  const id = new URLSearchParams(search).get("renamefolder");
-  const currentFolder = new URLSearchParams(search).get("folder");
+  const id = new URLSearchParams(search).get("edit_table");
+  const currentTable = new URLSearchParams(search).get("table");
 
   // To Get Current Details
   useEffect(() => {
     if (id) {
-      axios.get(`/folders/?edit=${id}`).then((response) => {
-        setFolder(response.data);
+      axios.get(`/testcasetable/?edit=${id}`).then((response) => {
+        setTable(response.data);
         console.log(response?.data);
       });
     }
@@ -30,8 +30,8 @@ function RenameFolder({ styles }) {
   const handleSubmit = (values, actions) => {
     setLoading(true);
     axios
-      .put(`/folder/${id}`, {
-        foldername: values?.foldername,
+      .put(`/testcasetable/${id}`, {
+        tablename: values?.tablename,
       })
       .then((res) => {
         navigate("/test_management", { replace: true }),
@@ -45,36 +45,35 @@ function RenameFolder({ styles }) {
       });
     actions.setSubmitting(false);
   };
-
   return (
     <div
       className={`bg-black bg-opacity-70 absolute z-50 left-0 right-0 top-0 flex justify-center items-center h-screen ${styles}`}
     >
       <div className="bg-white p-8 w-3/12 rounded-md">
         <h1 className="text-center text-lg font-semibold">
-          Rename {currentFolder}
+          Rename {currentTable}
         </h1>
         <Formik
           enableReinitialize={true}
           initialValues={{
-            foldername: folder?.foldername,
+            tablename: table?.tablename,
           }}
           validationSchema={Yup.object().shape({
-            foldername: Yup.string().required("Required field"),
+            tablename: Yup.string().required("Required field"),
           })}
           onSubmit={handleSubmit}
         >
           <Form>
             <div className="mt-4">
-              <label className="font-semibold">Folder Name</label>
+              <label className="font-semibold">Table Name</label>
               <Field
                 className="block bg-gray-50 border border-gray-200 rounded-md p-2 w-full"
-                name={"foldername"}
+                name={"tablename"}
                 type="text"
               />
               <ErrorMessage
                 component="label"
-                name="foldername"
+                name="tablename"
                 className="text-sm text-red-500"
               />
             </div>
@@ -100,4 +99,4 @@ function RenameFolder({ styles }) {
   );
 }
 
-export default RenameFolder;
+export default EditTestCaseTable;

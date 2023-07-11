@@ -14,8 +14,10 @@ import SearchInput from "./SearchInput";
 import ReactPagination from "./ReactPaginate";
 import TotalNo from "./TotalNo";
 import BreadCrumb from "./BreadCrumb";
+import { BiDownArrow } from "react-icons/bi";
+import { BiUpArrow } from "react-icons/bi";
 
-const FourTabs = ({
+const ManagementTable = ({
   testCaseTableFunction,
   to,
   setOpenEditModal,
@@ -28,6 +30,7 @@ const FourTabs = ({
   const [tablename, setTablename] = useState([]);
   const [foldername, setFoldername] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
+  const [exportData, setExportData] = useState([]);
 
   // Getting Query From URL
   let search = useLocation().search;
@@ -59,6 +62,7 @@ const FourTabs = ({
       .get(`/testcase?tableid=${tableId}`)
       .then((response) => {
         setTestCases(response?.data);
+        console.log(response?.data);
       })
       .catch((response) => {
         console.log(response.data);
@@ -113,11 +117,56 @@ const FourTabs = ({
       setCurrentPage(1);
     });
   };
+  // SORT_ASCENDING
+  const sortAscending = (data) => {
+    axios
+      .get(`/testcase?sortAsc=ascending&tableid=${tableId}`)
+      .then((response) => {
+        setTestCases(response.data);
+        setCurrentPage(1);
+      });
+  };
+  // SORT_DESCENDING
+  const sortDescending = (data) => {
+    axios
+      .get(`/testcase?sortDsc=descending&tableid=${tableId}`)
+      .then((response) => {
+        setTestCases(response.data);
+        setCurrentPage(1);
+      });
+  };
+  // FILTER
+  const submitFilter = (values, actions) => {
+    axios
+      .get(
+        `/testcase?filterPriority=${values?.priority}&filterCategory=${values?.category}&filterStaff=${values?.assignedstaff}&tableid=${tableId}`
+      )
+      .then((res) => {
+        setTestCases(res.data);
+        setCurrentPage(1);
+      })
+      .catch((err) => {
+        toast.error(err);
+      });
+    actions.setSubmitting(false);
+  };
+
+  const handleExportData = () => {
+    axios
+      .get(`/exportData?tableid=${tableId}`)
+      .then((response) => {
+        setExportData(response.data);
+      })
+      .catch((response) => {
+        console.log(response.data);
+      });
+  };
 
   useEffect(() => {
     getTestCaseTable();
     getTestCases();
     getFolders();
+    handleExportData();
     if (tableId) {
       setOpenTab(tableId);
     }
@@ -150,6 +199,10 @@ const FourTabs = ({
         sortHigh={sortPriorityHigh}
         sortMedium={sortPriorityMedium}
         sortLow={sortPriorityLow}
+        fetchAll={getTestCases}
+        sheetdata={exportData}
+        submitFilter={submitFilter}
+        reloadTestCase={getTestCases}
       />
 
       <div className="rounded-sm border-b border-stroke bg-white shadow-default mt-4">
@@ -185,27 +238,39 @@ const FourTabs = ({
         <table className="w-full">
           <thead>
             <tr className="bg-gray-100 border-b border-b-gray-300 text-left">
-              <th className="flex items-center px-2">
-                <input type="checkbox" className="w-4" />
-                <p className="font-semibold m-2">ID</p>
+              <th className="flex items-center justify-between px-2">
+                <div className="flex items-center">
+                  <input type="checkbox" className="w-4" />
+                  <p className="font-semibold m-2">ID</p>
+                </div>
+                <div className="flex flex-col items-center justify-end gap-1">
+                  <button onClick={sortAscending}>
+                    {React.createElement(BiUpArrow, {
+                      size: "10",
+                    })}
+                  </button>
+                  <button onClick={sortDescending}>
+                    {React.createElement(BiDownArrow, { size: "10" })}
+                  </button>
+                </div>
               </th>
               <th>
-                <p className="font-semibold border-l-2 border-l-gray-400 border-r-2 border-r-gray-400 mx-2 px-2">
+                <p className="font-semibold border-l border-l-gray-200 border-r border-r-gray-200 mx-2 px-2">
                   Title
                 </p>
               </th>
               <th>
-                <p className="font-semibold border-r-2 border-r-gray-400 m-2">
+                <p className="font-semibold border-r border-r-gray-200 m-2">
                   Category
                 </p>
               </th>
               <th>
-                <p className="font-semibold border-r-2 border-r-gray-400 m-2">
+                <p className="font-semibold border-r border-r-gray-200 m-2">
                   Priority
                 </p>
               </th>
               <th>
-                <p className="font-semibold border-r-2 border-r-gray-400 m-2">
+                <p className="font-semibold border-r border-r-gray-200 m-2">
                   Assiged To
                 </p>
               </th>
@@ -221,7 +286,10 @@ const FourTabs = ({
               return (
                 <>
                   {data.testcasetable === tableId && (
-                    <tr className="text-sm font-semibold" key={i}>
+                    <tr
+                      className="text-sm font-semibold border-b-2 border-b-300"
+                      key={i}
+                    >
                       <td className="flex justify-start items-center gap-2 py-4 px-2">
                         <input type="checkbox" className="w-4" />
                         <p className="font-semibold">
@@ -233,17 +301,17 @@ const FourTabs = ({
                         </p>
                       </td>
                       <td>
-                        <p className="border-l-2 border-l-gray-400 border-r-2 border-r-gray-400 mx-2 px-2">
+                        <p className="border-l border-l-gray-200 border-r border-r-gray-200 mx-2 px-2">
                           {data?.title}
                         </p>
                       </td>
                       <td>
-                        <p className="font-semibold border-r-2 border-r-gray-400 m-2">
+                        <p className="font-semibold border-r border-r-gray-200 m-2">
                           {data?.category}
                         </p>
                       </td>
                       <td>
-                        <div className="border-r-2 border-r-gray-400 m-2">
+                        <div className="border-r border-r-gray-200 m-2">
                           {data?.priority === "High" && (
                             <button className="px-8 py-1 bg-red-600 rounded-full text-white w-32 ">
                               {data?.priority}
@@ -262,9 +330,11 @@ const FourTabs = ({
                         </div>
                       </td>
                       <td className="flex justify-between items-center m-2">
-                        <p className="font-semibold">{data?.assignedstaff}</p>
+                        <p className="font-semibold">{data?.staff[0]?.name}</p>
                         <Link
-                          to={`/test_management?caseId=${data._id}&folder=${folderId}&table=${tableId}`}
+                          to={`/test_management?caseId=${data._id}&id=${
+                            i + 1 * (currentPage * postsPerPage - 9)
+                          }&folder=${folderId}&table=${tableId}`}
                         >
                           <img
                             src={dotsIcon}
@@ -292,126 +362,6 @@ const FourTabs = ({
             <tr></tr>
           </tbody>
         </table>
-
-        {/* <div>
-          {testCaseTable.map((tab) => (
-            <div
-              key={tab._id}
-              className={`leading-relaxed ${
-                openTab === tab._id ? "block" : "hidden"
-              }`}
-            >
-              <table className="w-full">
-                <thead>
-                  <tr className="bg-gray-100 border-b border-b-gray-300 text-left">
-                    <th className="flex items-center px-2">
-                      <input type="checkbox" className="w-4" />
-                      <p className="font-semibold m-2">ID</p>
-                    </th>
-                    <th>
-                      <p className="font-semibold border-l-2 border-l-gray-400 border-r-2 border-r-gray-400 mx-2 px-2">
-                        Title
-                      </p>
-                    </th>
-                    <th>
-                      <p className="font-semibold border-r-2 border-r-gray-400 m-2">
-                        Category
-                      </p>
-                    </th>
-                    <th>
-                      <p className="font-semibold border-r-2 border-r-gray-400 m-2">
-                        Priority
-                      </p>
-                    </th>
-                    <th>
-                      <p className="font-semibold border-r-2 border-r-gray-400 m-2">
-                        Assiged To
-                      </p>
-                    </th>
-                    <th className="w-4">
-                      <p>
-                        <img src={dotsIcon} />
-                      </p>
-                    </th>
-                  </tr>
-                </thead>
-
-                {tableId === tab._id && (
-                  <tbody>
-                    {tab.testcases.map((data, i) => {
-                      return (
-                        <tr className="text-sm font-semibold" key={i}>
-                          <td className="flex justify-start items-center gap-2 py-4 px-2">
-                            <input type="checkbox" className="w-4" />
-                            <p className="font-semibold">
-                              {tab?.tablename}
-                              {"-"}
-                              {i + 1 * (1 * 10 - 9)}
-                            </p>
-                          </td>
-                          <td>
-                            <p className="border-l-2 border-l-gray-400 border-r-2 border-r-gray-400 mx-2 px-2">
-                              {data?.title}
-                            </p>
-                          </td>
-                          <td>
-                            <p className="font-semibold border-r-2 border-r-gray-400 m-2">
-                              {data?.category}
-                            </p>
-                          </td>
-                          <td>
-                            <div className="border-r-2 border-r-gray-400 m-2">
-                              {data?.priority === "High" && (
-                                <button className="px-8 py-1 bg-red-600 rounded-full text-white w-32 ">
-                                  {data?.priority}
-                                </button>
-                              )}
-                              {data?.priority === "Medium" && (
-                                <button className="px-8 py-1 bg-yellow-500 rounded-full text-white w-32 ">
-                                  {data?.priority}
-                                </button>
-                              )}
-                              {data?.priority === "Low" && (
-                                <button className="px-8 py-1 bg-green-500 rounded-full text-white w-32 ">
-                                  {data?.priority}
-                                </button>
-                              )}
-                            </div>
-                          </td>
-                          <td className="flex justify-between items-center m-2">
-                            <p className="font-semibold">
-                              {data?.assignedstaff}
-                            </p>
-                            <Link
-                              to={`/test_management?caseId=${data._id}&folder=${folderId}&table=${tableId}`}
-                            >
-                              <img
-                                src={dotsIcon}
-                                onClick={setOpenEditModal}
-                                className="cursor-pointer"
-                              />
-                            </Link>
-                          </td>
-                          <td className="w-4">
-                            <Link
-                              to={`/test_management?deleteCase=${data._id}&folder=${folderId}&table=${tableId}`}
-                            >
-                              <img
-                                src={deleteIcon}
-                                onClick={setOpenDeleteModal}
-                                className="cursor-pointer"
-                              />
-                            </Link>
-                          </td>
-                        </tr>
-                      );
-                    })}
-                  </tbody>
-                )}
-              </table>
-            </div>
-          ))}
-        </div> */}
       </div>
       <div className="flex justify-end items-center gap-4">
         <ReactPagination
@@ -424,4 +374,4 @@ const FourTabs = ({
   );
 };
 
-export default FourTabs;
+export default ManagementTable;

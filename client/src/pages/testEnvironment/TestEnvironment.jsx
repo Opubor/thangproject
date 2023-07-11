@@ -74,7 +74,7 @@ function TestEnvironment() {
     <>
       <DefaultLayout>
         <div
-          className={`p-6 h-screen ${
+          className={`p-6 pt-12 md:pt-8 lg:pt-6 h-screen ${
             openAddEnv ? "bg-modalbackground" : "bg-white"
           }`}
         >
@@ -95,11 +95,11 @@ function TestEnvironment() {
                 <img src={plusBlue} />
               </button>
             </div>
-            <div className="flex justify-between items-center">
-              <div className="w-full pr-8">
+            <div className="flex flex-col md:flex-row justify-between items-center">
+              <div className="w-full lg:w-7/12 pr-8">
                 <SearchInput onSearch={search} />
               </div>
-              <div className="flex items-center gap-4">
+              <div className="w-full lg:w-5/12 flex justify-start lg:justify-end items-center gap-4">
                 <ReactPagination
                   pageCount={pageCount}
                   handlePageClick={handlePageClick}

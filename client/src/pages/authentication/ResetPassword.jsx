@@ -6,6 +6,7 @@ import axios from "../../../src/sevices/axios";
 import { toast } from "react-toastify";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useEffect } from "react";
+import logo from "../../assets//Group 26942.png";
 
 function ResetPassword() {
   const navigate = useNavigate();
@@ -51,16 +52,24 @@ function ResetPassword() {
   };
 
   return (
-    <div className="flex justify-center items-center h-screen bg-blue-300">
-      <div className="bg-white p-6 rounded-md">
-        <div className="mt-4">
-          <h1 className="font-bold text-2xl text-center">Reset Password</h1>
-          <p>
-            Your new password must be different from previously used <br></br>{" "}
-            passwords
+    <div className=" h-screen bg-white">
+      <div className="px-36 py-4 font-bold text-xl flex items-center">
+        <img className="w-8" src={logo} />
+        <h1>Test management</h1>
+      </div>
+      <div className="flex justify-between items-center px-56">
+        <div className="py-52">
+          <h1 className="font-bold text-5xl mb-5">Reset Password</h1>
+          <p className="font-semibold text-2xl mb-6">
+            Smart test management software
           </p>
+          <p className="text-base">Don't have an account?</p>
+          <Link to={"/"} className="text-blue-900 text-sm font-semibold">
+            ~Back to Login~{" "}
+          </Link>
         </div>
-        <div className="mt-6">
+        <div className="w-96">
+          <h1 className="font-bold text-center text-2xl mb-4">Sign in</h1>
           <Formik
             initialValues={{
               newPassword: "",
@@ -78,10 +87,9 @@ function ResetPassword() {
             onSubmit={handleSubmit}
           >
             <Form>
-              <div>
-                <label className="font-semibold">New Password</label>
+              <div className="mb-4">
                 <Field
-                  className="block bg-gray-50 border border-gray-200 rounded-md p-2 w-full"
+                  className="bg-slate-100 text-black rounded-md px-6 py-3 w-full text-sm focus:border-none focus:outline-blue-500"
                   placeholder={"Enter your new password"}
                   name={"newPassword"}
                   type="password"
@@ -92,11 +100,10 @@ function ResetPassword() {
                   className="text-sm text-red-500"
                 />
               </div>
-              <div>
-                <label className="font-semibold">Comfirm Password</label>
+              <div className="mb-4">
                 <Field
-                  className="block bg-gray-50 border border-gray-200 rounded-md p-2 w-full"
-                  placeholder={"Comfirm Password"}
+                  className="bg-slate-100 text-black rounded-md px-6 py-3 w-full text-sm focus:border-none focus:outline-blue-500"
+                  placeholder={"Comfirm new Password"}
                   name={"comfirmPassword"}
                   type="password"
                 />
@@ -108,41 +115,13 @@ function ResetPassword() {
               </div>
 
               <button
-                className="bg-blue-500 py-2 text-white font-semibold w-full rounded-md mt-6"
+                className="bg-blue-500 py-3 text-white font-semibold w-full rounded-md mt-6 text-sm shadow shadow-2xl shadow-blue-900 hover:bg-blue-700"
                 type="submit"
               >
-                {loading ? <ButtonPreloader /> : "RESET"}
+                {loading ? <ButtonPreloader /> : "Reset"}
               </button>
-              <p className="text-center font-semibold mt-2">
-                <Link to="/" className="text-blue-900">
-                  {"<"} Back to login
-                </Link>
-              </p>
             </Form>
           </Formik>
-          {/* <form>
-            <div>
-              <input
-                placeholder="New Password"
-                className="border p-4 rounded-md w-full mb-4"
-              />
-            </div>
-            <div>
-              <input
-                placeholder="Comfirm Password"
-                className="border p-4 rounded-md w-full mb-4"
-              />
-            </div>
-
-            <button className="bg-blue-500 py-2 text-white font-semibold w-full rounded-md mt-6">
-              RESET
-            </button>
-            <p className="text-center font-semibold mt-2">
-              <Link to="/" className="text-blue-900">
-                {"<"} Back to login
-              </Link>
-            </p>
-          </form> */}
         </div>
       </div>
     </div>

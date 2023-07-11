@@ -1,21 +1,21 @@
 import React, { useState } from "react";
-import ButtonPreloader from "../ButtonPreloader";
+import ButtonPreloader from "../../components/ButtonPreloader";
 import axios from "../../sevices/axios";
 import { Link, useLocation } from "react-router-dom";
 import { toast } from "react-toastify";
 
-function DeleteFolder({ styles }) {
+function DeleteTestCaseTable({ styles }) {
   const [loading, setLoading] = useState(false);
   // Getting Query From URL
   let search = useLocation().search;
-  const deleteId = new URLSearchParams(search).get("deletefolder");
-  const currentFolder = new URLSearchParams(search).get("folder");
+  const deleteId = new URLSearchParams(search).get("deletetable");
+  const currentTable = new URLSearchParams(search).get("table");
 
   const handleDelete = () => {
     console.log("delete");
     setLoading(true);
     axios
-      .delete(`/folder/${deleteId}`)
+      .delete(`/testcasetable/${deleteId}`)
       .then((res) => {
         navigate("/test_management", { replace: true }),
           setLoading(false),
@@ -34,10 +34,10 @@ function DeleteFolder({ styles }) {
     >
       <div className="bg-white px-8 py-4 w-10/12 md:w-6/12 lg:w-5/12 xl:w-3/12 rounded-sm">
         <h1 className="text-center text-xl font-semibold mb-2">
-          Delete {currentFolder}
+          Delete {currentTable}
         </h1>
         <p className="text-center mb-6 text-sm text-textgray">
-          Are you sure you want to delete this Folder
+          Are you sure you want to delete {currentTable}
         </p>
         <form>
           <div className="flex justify-center items-center gap-12 mt-8">
@@ -60,4 +60,4 @@ function DeleteFolder({ styles }) {
   );
 }
 
-export default DeleteFolder;
+export default DeleteTestCaseTable;

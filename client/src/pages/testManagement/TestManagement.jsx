@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useLocation, Link, useNavigate } from "react-router-dom";
 import DefaultLayout from "../../components/DefaultLayout";
-import FourTabs from "../../components/FourTabs";
+import ManagementTable from "../../components/ManagementTable";
 import clipBoard from "../../assets/paste-clipboard.png";
 import folder from "../../assets/Vector (7).png";
 import page from "../../assets/page.png";
@@ -15,6 +15,8 @@ import { toast } from "react-toastify";
 import EditTestCase from "./EditTestCase";
 import ButtonPreloader from "../../components/ButtonPreloader";
 import DeleteTestCase from "./DeleteTestCase";
+import DeleteTestCaseTable from "./DeleteTestCaseTable";
+import EditTestCaseTable from "./EditTestCaseTable";
 
 function TestManagement() {
   const navigate = useNavigate();
@@ -32,6 +34,8 @@ function TestManagement() {
   const caseId = new URLSearchParams(search).get("caseId");
   const renamefolder = new URLSearchParams(search).get("renamefolder");
   const deletefolder = new URLSearchParams(search).get("deletefolder");
+  const edittable = new URLSearchParams(search).get("edit_table");
+  const deletetable = new URLSearchParams(search).get("deletetable");
   const deleteCase = new URLSearchParams(search).get("deleteCase");
 
   return (
@@ -44,7 +48,7 @@ function TestManagement() {
 
               {/* =========Main Table======== */}
 
-              <FourTabs
+              <ManagementTable
                 to={`/test_management?folder=${folderId}`}
                 testCaseTableFunction={() => setopenAddTestCaseModal(true)}
                 setOpenEditModal={() => setsetOpenEditModal(true)}
@@ -78,6 +82,12 @@ function TestManagement() {
       )}
       {deletefolder && (
         <DeleteFolder styles={deletefolder ? "flex" : "hidden"} />
+      )}
+      {edittable && (
+        <EditTestCaseTable styles={edittable ? "flex" : "hidden"} />
+      )}
+      {deletetable && (
+        <DeleteTestCaseTable styles={deletetable ? "flex" : "hidden"} />
       )}
       <EditTestCase
         styles={OpenEditModal ? "flex" : "hidden"}

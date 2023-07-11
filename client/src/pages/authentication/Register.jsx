@@ -6,6 +6,7 @@ import ButtonPreloader from "../../components/ButtonPreloader";
 import axios from "../../sevices/axios";
 import { toast } from "react-toastify";
 import { Navigate } from "react-router-dom";
+import logo from "../../assets//Group 26942.png";
 
 function Register() {
   const [loading, setLoading] = useState(false);
@@ -37,13 +38,26 @@ function Register() {
   }
 
   return (
-    <div className="flex justify-center items-center h-screen bg-blue-300">
-      <div className="bg-white p-6 lg:rounded-md w-full md:w-9/12 lg:w-6/12 xl:w-4/12">
-        <div className="text-center mt-4">
-          <h1 className="font-bold text-2xl">Smart Testcase Management</h1>
-          <p>Enter your details to Register</p>
+    <div className=" h-screen bg-white">
+      <div className="px-36 py-4 font-bold text-xl flex items-center">
+        <img className="w-8" src={logo} />
+        <h1>Test management</h1>
+      </div>
+      <div className="flex justify-between items-center px-56">
+        <div className="py-52">
+          <h1 className="font-bold text-5xl mb-5">Create Account</h1>
+          <p className="font-semibold text-2xl mb-6">
+            Smart test management software
+          </p>
+          <p className="text-base">Already have an account?</p>
+          <Link to={"/"} className="text-blue-900 text-sm font-semibold">
+            ~Sign in!!!
+          </Link>
         </div>
-        <div className="mt-6">
+        <div className="w-96">
+          <h1 className="font-bold text-center text-2xl mb-4">
+            Create Account
+          </h1>
           <Formik
             initialValues={{
               name: "",
@@ -60,11 +74,10 @@ function Register() {
             onSubmit={handleSubmit}
           >
             <Form>
-              <div>
-                <label className="font-semibold">Name</label>
+              <div className="mb-4">
                 <Field
-                  className="border p-4 rounded-md w-full mb-4"
-                  placeholder={"Hoang Thuy"}
+                  className="bg-slate-100 text-black rounded-md px-6 py-3 w-full text-sm focus:border-none focus:outline-blue-500"
+                  placeholder={"Name"}
                   name={"name"}
                   type="text"
                 />
@@ -75,11 +88,10 @@ function Register() {
                 />
               </div>
 
-              <div>
-                <label className="font-semibold">E-mail</label>
+              <div className="mb-4">
                 <Field
-                  className="border p-4 rounded-md w-full mb-4"
-                  placeholder={"hoangthuy@gmail.com"}
+                  className="bg-slate-100 text-black rounded-md px-6 py-3 w-full text-sm focus:border-none focus:outline-blue-500"
+                  placeholder={"E-mail"}
                   name={"email"}
                   type="text"
                 />
@@ -90,11 +102,10 @@ function Register() {
                 />
               </div>
 
-              <div>
-                <label className="font-semibold">Company</label>
+              <div className="mb-4">
                 <Field
-                  className="border p-4 rounded-md w-full mb-4"
-                  placeholder={"Thang Industrals"}
+                  className="bg-slate-100 text-black rounded-md px-6 py-3 w-full text-sm focus:border-none focus:outline-blue-500"
+                  placeholder={"Company"}
                   name={"company"}
                   type="text"
                 />
@@ -105,11 +116,10 @@ function Register() {
                 />
               </div>
 
-              <div>
-                <label className="font-semibold">Password</label>
+              <div className="mb-4">
                 <Field
-                  className="border p-4 rounded-md w-full mb-4"
-                  placeholder={"*******"}
+                  className="bg-slate-100 text-black rounded-md px-6 py-3 w-full text-sm focus:border-none focus:outline-blue-500"
+                  placeholder={"Password"}
                   name={"password"}
                   type="password"
                 />
@@ -119,20 +129,25 @@ function Register() {
                   className="text-sm text-red-500"
                 />
               </div>
-              <button className="bg-blue-500 py-2 text-white font-semibold w-full rounded-md mt-6">
-                {loading ? <ButtonPreloader /> : "REGISTER"}
+              <button className="bg-blue-500 py-3 text-white font-semibold w-full rounded-md mt-6 text-sm shadow shadow-2xl shadow-blue-900 hover:bg-blue-700">
+                {loading ? <ButtonPreloader /> : "Register"}
               </button>
-              <p className="text-center font-semibold mt-2">
-                Already have an account?{" "}
-                <Link to={"/"} className="text-blue-900">
-                  Sign In
-                </Link>
-              </p>
             </Form>
           </Formik>
         </div>
       </div>
     </div>
+    // <div className="flex justify-center items-center h-screen bg-blue-300">
+    //   <div className="bg-white p-6 lg:rounded-md w-full md:w-9/12 lg:w-6/12 xl:w-4/12">
+    //     <div className="text-center mt-4">
+    //       <h1 className="font-bold text-2xl">Smart Testcase Management</h1>
+    //       <p>Enter your details to Register</p>
+    //     </div>
+    //     <div className="mt-6">
+    //
+    //     </div>
+    //   </div>
+    // </div>
   );
 }
 

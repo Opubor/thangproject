@@ -5,6 +5,11 @@ const TestCase = require('../models/testCase');
 const TestCaseTable = require('../models/testCaseTable');
 const { testCaseValidator } = require('../validators/validators');
 const createHttpError = require("http-errors");
+const XLSX = require("xlsx");
+const { Staffs, getStaff } = require('../models/staffs');
+const multer  = require('multer')
+const csv = require("csvtojson");
+
 
 /**
  * @swagger
@@ -121,9 +126,13 @@ const createHttpError = require("http-errors");
 router.post('/testcase', async function(req,res,next){
     try {
        const {testcasetable,assignedfolderId ,priority, title, teststep,precondition, description, category, status, results, expectations, assignedstaff} = req.body
-    //    const {error} = testCaseValidator.validate({testcasetable,assignedfolderId ,priority, title, teststep,precondition, description, category, status, results, expectations, assignedstaff})
-    //    if (error) throw new createHttpError.BadRequest(error.details[0].message);
+       const {error} = testCaseValidator.validate({testcasetable,assignedfolderId ,priority, title, teststep,precondition, description, category, status, results, expectations, assignedstaff})
+       if (error) throw new createHttpError.BadRequest(error.details[0].message);
         let testcase = await TestCase.create({testcasetable,assignedfolderId ,priority, title, teststep,precondition, description, category, status, results, expectations, assignedstaff});
+        let staff = await Staffs.findOne({_id : assignedstaff})
+        testcase.staff = staff
+        testcase.assignedstaffname = staff.name
+        testcase.save()
         let assignedtable = []
         let assignedfolder = []
         if (testcasetable.match(/^[0-9a-fA-F]{24}$/)) {
@@ -195,8 +204,8 @@ router.post('/testcase', async function(req,res,next){
 // READ_TEST-CASE : READ_TEST-CASE : READ_TEST-CASE : READ_TEST-CASE
 router.get('/testcase', async function(req,res,next){
     try {
-        const {edit,q,tableid,sortHigh,sortMedium,sortLow} = req.query
-        let populate = "testtable"
+        const {edit,q,tableid,sortHigh,sortMedium,sortLow,sortAsc,sortDsc,filterPriority,filterCategory,filterStaff} = req.query
+        let populate = ['testtable', 'staff']
         if(edit){
             let testCase = await TestCase.findById(edit).populate(populate)
             return res.json(testCase)
@@ -213,6 +222,41 @@ router.get('/testcase', async function(req,res,next){
         if(sortLow){
             let testCase = await TestCase.find({priority:"Low"}).sort({_id : 'descending'}).populate(populate)
             return res.json(testCase)
+        }
+
+        if(sortAsc){
+            let testCase = await TestCase.find({testcasetable:tableid}).sort({_id : sortAsc}).populate(populate)
+            return res.json(testCase)
+        }
+        if(sortDsc){
+            let testCase = await TestCase.find({testcasetable:tableid}).sort({_id : sortDsc}).populate(populate)
+            return res.json(testCase)
+        }
+
+        if(filterPriority || filterCategory || filterStaff){
+            var category = new RegExp(filterCategory, "i")
+            if(filterPriority && filterCategory){
+                let testCase = await TestCase.find({testcasetable:tableid, priority: filterPriority, category: category}).sort({_id : 'descending'}).populate(populate)
+                return res.json(testCase)
+            }else if(filterPriority && filterStaff){
+                let testCase = await TestCase.find({testcasetable:tableid, priority: filterPriority, assignedstaff: filterStaff}).sort({_id : 'descending'}).populate(populate)
+                return res.json(testCase)
+            }else if(filterCategory && filterStaff){
+                let testCase = await TestCase.find({testcasetable:tableid, category: category, assignedstaff: filterStaff}).sort({_id : 'descending'}).populate(populate)
+                return res.json(testCase)
+            }else if(filterPriority && filterCategory && filterStaff){
+                let testCase = await TestCase.find({testcasetable:tableid, priority: filterPriority, category: category, assignedstaff: filterStaff}).sort({_id : 'descending'}).populate(populate)
+                return res.json(testCase)
+            }else if(filterPriority){
+                let testCase = await TestCase.find({testcasetable:tableid, priority: filterPriority}).sort({_id : 'descending'}).populate(populate)
+                return res.json(testCase)
+            }else if(filterCategory){
+                let testCase = await TestCase.find({testcasetable:tableid, category: category}).sort({_id : 'descending'}).populate(populate)
+                return res.json(testCase)
+            }else if(filterStaff){
+                let testCase = await TestCase.find({testcasetable:tableid, assignedstaff: filterStaff}).sort({_id : 'descending'}).populate(populate)
+                return res.json(testCase)
+            } 
         }
         
         if(q){
@@ -274,11 +318,15 @@ router.get('/alltestcase', async function(req,res,next){
 // UPDATE_TEST-CASE : UPDATE_TEST-CASE : UPDATE_TEST-CASE : UPDATE_TEST-CASE
 router.put('/testcase/:id', async function(req, res, next) {
     try {
-        const{ priority, title, teststep,precondition, description, category, status, results, expectations, assignedstaff, testcaseid } = req.body
+        const{ testcasetable,assignedfolderId ,priority, title, teststep,precondition, description, category, status, results, expectations, assignedstaff, testcaseid } = req.body
         const id = req.params.id
-        // const {error} = testCaseValidator.validate({testcasetable,assignedfolderId ,priority, title, teststep,precondition, description, category, status, results, expectations, assignedstaff})
-        // if (error) throw new createHttpError.BadRequest(error.details[0].message);
-        await TestCase.findByIdAndUpdate(id,{priority, title, teststep,precondition, description, category, status, results, expectations, assignedstaff, testcaseid})
+        const {error} = testCaseValidator.validate({testcasetable,assignedfolderId ,priority, title, teststep,precondition, description, category, status, results, expectations, assignedstaff})
+        if (error) throw new createHttpError.BadRequest(error.details[0].message);
+        let testcase =  await TestCase.findByIdAndUpdate(id,{priority, title, teststep,precondition, description, category, status, results, expectations, assignedstaff, testcaseid})
+        let staff = await Staffs.findOne({_id : assignedstaff})
+        testcase.staff = staff
+        testcase.assignedstaffname = staff.name
+        testcase.save()
         return res.status(200).send('Updated Successfully')
     } catch (error) {
         return res.status(401).send(error.message)
@@ -316,6 +364,40 @@ router.delete('/testcase/:id', async function(req, res, next) {
         return res.status(401).send(error.message)
     }
 });
+
+const storage = multer.diskStorage({
+    destination: (req,file,cb) =>{
+        cb(null,"./uploads");
+    },
+    filename: (req,file,cb) => {
+        cb(null, file.originalname)
+    }
+})
+const upload = multer({
+    storage
+})
+// router.post('/importTestCase', upload.single('importFile'), async function(req,res,next){
+//     try {
+        // let xlFile = XLSX.readFile(req.file.path)
+        // let sheet = xlFile.Sheets[xlFile.SheetNames[0]]
+        // let P_JSON = XLSX.utils.sheet_to_json(sheet)
+        // let importedFile = await TestCase.insertMany(P_JSON)
+        // console.log(importedFile)
+        // const jsonArray = await csv().fromFile(req.file.path);
+        // let title = ""
+        // jsonArray.map((data, i) => {
+        //     return(
+        //         title = data.title
+        //     )
+        // })
+        // var parsedData = JSON.parse(jsonArray)
+        // let importedFile = await TestCase.insertMany(jsonArray)
+        // return res.send(parsedData)
+        // return res.status(200).send('Test case created successfully')
+//     } catch (error) {
+//         return res.status(401).send(error.message)
+//     }
+// })
 
 
 module.exports = router

@@ -4,6 +4,7 @@ import * as Yup from "yup";
 import { Link, Navigate } from "react-router-dom";
 import { loginContext } from "../../context/auth";
 import ButtonPreloader from "../../components/ButtonPreloader";
+import logo from "../../assets//Group 26942.png";
 import axios from "../../sevices/axios";
 import { toast } from "react-toastify";
 
@@ -34,13 +35,27 @@ function Login() {
   }
 
   return (
-    <div className="flex justify-center items-center h-screen bg-blue-300">
-      <div className="bg-white p-6 lg:rounded-md w-full md:w-9/12 lg:w-6/12 xl:w-4/12">
-        <div className="text-center mt-4">
-          <h1 className="font-bold text-2xl">Smart Testcase Management</h1>
-          <p>Enter your details to Log in</p>
+    <div className=" h-screen bg-white">
+      <div className="px-36 py-4 font-bold text-xl flex items-center">
+        <img className="w-8" src={logo} />
+        <h1>Test management</h1>
+      </div>
+      <div className="flex justify-between items-center px-56">
+        <div className="py-52">
+          <h1 className="font-bold text-5xl mb-5">Sign in to</h1>
+          <p className="font-semibold text-2xl mb-6">
+            Smart test management software
+          </p>
+          <p className="text-base">Don't have an account?</p>
+          <Link
+            to={"/register"}
+            className="text-blue-900 text-sm font-semibold"
+          >
+            ~Register Here!!!
+          </Link>
         </div>
-        <div className="mt-6">
+        <div className="w-96">
+          <h1 className="font-bold text-center text-2xl mb-4">Sign in</h1>
           <Formik
             initialValues={{
               email: "",
@@ -53,11 +68,10 @@ function Login() {
             onSubmit={handleSubmit}
           >
             <Form>
-              <div>
-                <label className="font-semibold">E-mail</label>
+              <div className="mb-4">
                 <Field
-                  className="border p-4 rounded-md w-full mb-4"
-                  placeholder={"hoangthuy@gmail.com"}
+                  className="bg-slate-100 text-black rounded-md px-6 py-3 w-full text-sm focus:border-none focus:outline-blue-500"
+                  placeholder={"Enter your email"}
                   name={"email"}
                   type="text"
                 />
@@ -68,10 +82,9 @@ function Login() {
                 />
               </div>
 
-              <div>
-                <label className="font-semibold">Password</label>
+              <div className="mb-4">
                 <Field
-                  className="border p-4 rounded-md w-full mb-4"
+                  className="bg-slate-100 text-black rounded-md px-6 py-3 w-full text-sm focus:outline-blue-500"
                   placeholder={"*******"}
                   name={"password"}
                   type="password"
@@ -82,15 +95,15 @@ function Login() {
                   className="text-sm text-red-500"
                 />
               </div>
-              <button className="bg-blue-500 py-2 text-white font-semibold w-full rounded-md mt-6">
-                {loading ? <ButtonPreloader /> : "LOGIN"}
+              <Link
+                to={"/forgotpassword"}
+                className="text-blue-900 flex justify-end text-center text-sm"
+              >
+                Forgot password?
+              </Link>
+              <button className="bg-blue-500 py-3 text-white font-semibold w-full rounded-md mt-6 text-sm shadow shadow-2xl shadow-blue-900 hover:bg-blue-700">
+                {loading ? <ButtonPreloader /> : "Login"}
               </button>
-              <p className="text-center font-semibold mt-2">
-                New on our platform?{" "}
-                <Link to={"/register"} className="text-blue-900">
-                  Create an account
-                </Link>
-              </p>
             </Form>
           </Formik>
         </div>

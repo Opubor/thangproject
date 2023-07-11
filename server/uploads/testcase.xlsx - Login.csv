@@ -1,0 +1,81 @@
+ID,Category,Title,Priority,Precondition,Test Steps,Expectation ,Status case,Result ,Description,Assigned
+[Login-1],Admin Login,This is Admin Login,High,Window-Chrome,"1. Login     
+2. Click                                         
+3. Return                              
+4. Re-click",Its will run succesfully ,Pass,,This is a testcase example for Login,ThangNT39
+[Login-2],Admin Login,This is Admin Login,High,Window-Chrome,"1. Login     
+2. Click                                         
+3. Return                              
+4. Re-click",Its will run succesfully ,Pass,,This is a testcase example for Login,ThangNT39
+[Login-3],Admin Login,This is Admin Login,Low,Window-Chrome,"1. Login     
+2. Click                                         
+3. Return                              
+4. Re-click",Its will run succesfully ,Pass,,This is a testcase example for Login,ThangNT39
+[Login-4],Admin Login,This is Admin Login,Medium,MacOS-Chrome,"1. Login     
+2. Click                                         
+3. Return                              
+4. Re-click",Its will run succesfully ,Fail,Fail at ramdom,This is a testcase example for Login,ThangNT39
+[Login-5],Admin Login,This is Admin Login,Medium,MacOS-Chrome,"1. Login     
+2. Click                                         
+3. Return                              
+4. Re-click",Its will run succesfully ,Cancel,Not implement ,This is a testcase example for Login,ThangNT39
+[Login-6],User Login,This is User Login,Medium,Window-Chrome,"1. Login     
+2. Click                                         
+3. Return                              
+4. Re-click",Its will run succesfully ,Pass,,This is a testcase example for Login,ThangNT39
+[Login-7],User Login,This is User Login,Low,Window-Chrome,"1. Login     
+2. Click                                         
+3. Return                              
+4. Re-click",Its will run succesfully ,Pass,,This is a testcase example for Login,ThangNT39
+[Login-8],User Login,This is User Login,Low,Window-Chrome,"1. Login     
+2. Click                                         
+3. Return                              
+4. Re-click",Its will run succesfully ,Pending,Not done yet,This is a testcase example for Login,ThangNT39
+[Login-9],User Login,This is User Login,Low,Window-Chrome,"1. Login     
+2. Click                                         
+3. Return                              
+4. Re-click",Its will run succesfully ,Fail,Fail at ramdom,This is a testcase example for Login,ThangNT39
+[Login-10],User Login,This is User Login,Low,Window-Chrome,"1. Login     
+2. Click                                         
+3. Return                              
+4. Re-click",Its will run succesfully ,Fail,Fail at ramdom,This is a testcase example for Login,ThangNT39
+[Login-11],User Login,This is User Login,High,Window-Chrome,"1. Login     
+2. Click                                         
+3. Return                              
+4. Re-click",Its will run succesfully ,Pass,,This is a testcase example for Login,ThangNT39
+[Login-12],User Login,This is User Login,High,Window-Chrome,"1. Login     
+2. Click                                         
+3. Return                              
+4. Re-click",Its will run succesfully ,Blocked,Backend wrong workflow,This is a testcase example for Login,LinhNTK1
+[Login-13],User Login,This is User Login,Medium,Window-Chrome,"1. Login     
+2. Click                                         
+3. Return                              
+4. Re-click",Its will run succesfully ,Pass,,This is a testcase example for Login,LinhNTK1
+[Login-14],User Login,This is User Login,Low,Window-Chrome,"1. Login     
+2. Click                                         
+3. Return                              
+4. Re-click",Its will run succesfully ,Pass,,This is a testcase example for Login,LinhNTK1
+[Login-15],User Login,This is User Login,High,Window-Chrome,"1. Login     
+2. Click                                         
+3. Return                              
+4. Re-click",Its will run succesfully ,Pass,,This is a testcase example for Login,LinhNTK1
+[Login-16],User Login,This is User Login,High,MacOS-Chrome,"1. Login     
+2. Click                                         
+3. Return                              
+4. Re-click",Its will run succesfully ,Pass,,This is a testcase example for Login,LinhNTK1
+[Login-17],User Login,This is User Login,High,MacOS-Chrome,"1. Login     
+2. Click                                         
+3. Return                              
+4. Re-click",Its will run succesfully ,,Not test yet,This is a testcase example for Login,LinhNTK1
+[Login-18],User Login,This is User Login,Medium,MacOS-Chrome,"1. Login     
+2. Click                                         
+3. Return                              
+4. Re-click",Its will run succesfully ,,Not test yet,This is a testcase example for Login,LinhNTK1
+[Login-19],User Login,This is User Login,High,MacOS-Chrome,"1. Login     
+2. Click                                         
+3. Return                              
+4. Re-click",Its will run succesfully ,Cancel,Not implement ,This is a testcase example for Login,LinhNTK1
+[Login-20],User Login,This is User Login,High,MacOS-Chrome,"1. Login     
+2. Click                                         
+3. Return                              
+4. Re-click",Its will run succesfully ,Cancel,Not implement ,This is a testcase example for Login,LinhNTK1
