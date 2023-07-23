@@ -15,6 +15,8 @@ import ReactPagination from "../../components/ReactPaginate";
 import TotalNo from "../../components/TotalNo";
 import BreadCrumb from "../../components/BreadCrumb";
 import uilpadlock from "../../assets/uilpadlock.png";
+import arrowdown from "../../assets/arrowdown.png";
+import minusIcon from "../../assets/zondicons_minus-outline.png";
 
 function TestExecution() {
   // Getting Query From URL
@@ -40,7 +42,6 @@ function TestExecution() {
     if (caseId && uu) {
       axios.get(`/testcase/?edit=${caseId}`).then((response) => {
         setTestcase(response.data);
-        console.log(response.data);
       });
     }
   }
@@ -51,7 +52,7 @@ function TestExecution() {
         setTestCaseTable(response?.data);
         setTablename(
           response?.data.map((data, i) => {
-            return <>{tableId === data._id && data?.tablename}</>;
+            return tableId === data._id && data?.tablename;
           })
         );
       })
@@ -79,7 +80,7 @@ function TestExecution() {
       .then((response) => {
         setFoldername(
           response?.data.map((data, i) => {
-            return <>{folderId === data._id && data?.foldername}</>;
+            return folderId === data._id && data?.foldername;
           })
         );
       })
@@ -190,12 +191,13 @@ function TestExecution() {
           />
           {/* ==============Pie-Chart============== */}
           <div className="mt-8 py-4 border-2 border-gray-50 shadow-md rounded-lg">
-            <div className="flex justify-between items-center px-8">
-              <h1 className="text-xl font-bold text-textdark">Pie Chart</h1>
-              <img src={dots} />
+            <div className="flex items-center px-8">
+              <h1 className="text-xl font-bold text-textdark">
+                Total of status cases
+              </h1>
             </div>
-            <div className="flex justify-center items-center">
-              <div className="w-6/12">
+            <div className="flex flex-col md:flex-row justify-center items-center">
+              <div className="w-full md:w-5/12 flex justify-center items-center">
                 <PieChart
                   chartdata={{
                     labels: pieTestCase.map((data, i) => {
@@ -218,7 +220,9 @@ function TestExecution() {
                             ? "#3A3541"
                             : data.status === "Pass"
                             ? "#56CA00"
-                            : data.status === "Block" && "#32BAFF";
+                            : data.status === "Block"
+                            ? "#32BAFF"
+                            : "#32BAFFP";
                         }),
 
                         borderWidth: 0,
@@ -231,7 +235,7 @@ function TestExecution() {
                     radius: 100,
                     plugins: {
                       legend: {
-                        display: true,
+                        display: false,
                         position: "right",
                         labels: {
                           usePointStyle: true,
@@ -248,128 +252,177 @@ function TestExecution() {
                   }}
                 />
               </div>
-              {/* <div className="w-6/12">
-                {pieTestCase.map((data, i) => {
-                  return (
-                    <>
-                      <h1>{data.occurrence.length}</h1>
-                      <div
-                        className="font-semibold flex gap-2 items-center"
-                        style={{ color: "#EB7A12" }}
-                      >
-                        {data.status === "Pending" && (
-                          <div className="flex items-center">
-                            <div
-                              className="w-3 h-3 rounded-full"
-                              style={{ backgroundColor: "#EB7A12" }}
-                            >
-                              {" "}
-                            </div>
-                            {data.occurrence}
-                            {"  "}
-                            {data.status}
-                          </div>
-                        )}
+              <div className="w-full md:w-7/12 h-full p-8">
+                {tableId && (
+                  <>
+                    {" "}
+                    <div className="flex justify-start items-center gap-2 mb-6">
+                      <h1 className="p-2 rounded-md bg-gray-200 text-2xl font-semibold">
+                        {testCases.length}
+                      </h1>
+                      <p className="text-lg">Number of Results</p>
+                    </div>
+                    <div>
+                      <div className="flex items-center justify-between">
+                        {/* ===False=== */}
+                        <div className="flex justify-center items-center gap-2">
+                          <div className="bg-false rounded-full w-4 h-4"></div>
+                          <h1 className="text-false font-semibold">
+                            {
+                              testCases.filter((element) => {
+                                return element.status === "False";
+                              }).length
+                            }{" "}
+                            False
+                          </h1>
+                        </div>
+                        <div className="text-false text-sm">
+                          (
+                          {Math.round(
+                            (testCases.filter((element) => {
+                              return element.status === "False";
+                            }).length /
+                              testCases.length) *
+                              100
+                          )}
+                          {"% "} set to False)
+                        </div>
                       </div>
 
-                      <div
-                        className="font-semibold flex gap-2 items-center"
-                        style={{ color: "#DADADA" }}
-                      >
-                        {data.status === "Blank" && (
-                          <>
-                            <div
-                              className="w-3 h-3 rounded-full"
-                              style={{ backgroundColor: "#DADADA" }}
-                            >
-                              {" "}
-                            </div>
-                            {data.occurrence}
-                            {"  "}
-                            {data.status}
-                          </>
-                        )}
+                      {/* ===Pass=== */}
+                      <div className="flex items-center justify-between">
+                        <div className="flex justify-center items-center gap-2">
+                          <div className="bg-pass rounded-full w-4 h-4"></div>
+                          <h1 className="text-pass font-semibold">
+                            {
+                              testCases.filter((element) => {
+                                return element.status === "Pass";
+                              }).length
+                            }{" "}
+                            Pass
+                          </h1>
+                        </div>
+                        <div className="text-pass text-sm">
+                          (
+                          {Math.round(
+                            (testCases.filter((element) => {
+                              return element.status === "Pass";
+                            }).length /
+                              testCases.length) *
+                              100
+                          )}
+                          {"% "} set to Pass)
+                        </div>
                       </div>
 
-                      <div
-                        className="font-semibold flex gap-2 items-center"
-                        style={{ color: "#FF4C51" }}
-                      >
-                        {data.status === "False" && (
-                          <>
-                            <div
-                              className="w-3 h-3 rounded-full"
-                              style={{ backgroundColor: "#FF4C51" }}
-                            >
-                              {" "}
-                            </div>
-                            {data.occurrence}
-                            {"  "}
-                            {data.status}
-                          </>
-                        )}
+                      {/* ===Pending=== */}
+                      <div className="flex items-center justify-between">
+                        <div className="flex justify-center items-center gap-2">
+                          <div className="bg-pending rounded-full w-4 h-4"></div>
+                          <h1 className="text-pending font-semibold">
+                            {
+                              testCases.filter((element) => {
+                                return element.status === "Pending";
+                              }).length
+                            }{" "}
+                            Pending
+                          </h1>
+                        </div>
+                        <div className="text-pending text-sm">
+                          (
+                          {Math.round(
+                            (testCases.filter((element) => {
+                              return element.status === "Pending";
+                            }).length /
+                              testCases.length) *
+                              100
+                          )}
+                          {"% "} set to Pending)
+                        </div>
                       </div>
 
-                      <div
-                        className="font-semibold flex gap-2 items-center"
-                        style={{ color: "#3A3541" }}
-                      >
-                        {data.status === "Cancel" && (
-                          <>
-                            <div
-                              className="w-3 h-3 rounded-full"
-                              style={{ backgroundColor: "#3A3541" }}
-                            >
-                              {" "}
-                            </div>
-                            {data.occurrence}
-                            {"  "}
-                            {data.status}
-                          </>
-                        )}
+                      {/* ===Block=== */}
+                      <div className="flex items-center justify-between">
+                        <div className="flex justify-center items-center gap-2">
+                          <div className="bg-block rounded-full w-4 h-4"></div>
+                          <h1 className="text-block font-semibold">
+                            {
+                              testCases.filter((element) => {
+                                return element.status === "Block";
+                              }).length
+                            }{" "}
+                            Block
+                          </h1>
+                        </div>
+                        <div className="text-block text-sm">
+                          (
+                          {Math.round(
+                            (testCases.filter((element) => {
+                              return element.status === "Block";
+                            }).length /
+                              testCases.length) *
+                              100
+                          )}
+                          {"% "} set to Block)
+                        </div>
                       </div>
 
-                      <div
-                        className="font-semibold flex gap-2 items-center"
-                        style={{ color: "#56CA00" }}
-                      >
-                        {data.status === "Pass" && (
-                          <>
-                            <div
-                              className="w-3 h-3 rounded-full"
-                              style={{ backgroundColor: "#56CA00" }}
-                            >
-                              {" "}
-                            </div>
-                            {data.occurrence}
-                            {"  "}
-                            {data.status}
-                          </>
-                        )}
+                      {/* ===Cancel=== */}
+                      <div className="flex items-center justify-between">
+                        <div className="flex justify-center items-center gap-2">
+                          <div className="bg-cancel rounded-full w-4 h-4"></div>
+                          <h1 className="text-cancel font-semibold">
+                            {
+                              testCases.filter((element) => {
+                                return element.status === "Cancel";
+                              }).length
+                            }{" "}
+                            Cancel
+                          </h1>
+                        </div>
+                        <div className="text-cancel text-sm">
+                          (
+                          {Math.round(
+                            (testCases.filter((element) => {
+                              return element.status === "Cancel";
+                            }).length /
+                              testCases.length) *
+                              100
+                          )}
+                          {"% "} set to Cancel)
+                        </div>
                       </div>
 
-                      <div
-                        className="font-semibold flex gap-2 items-center"
-                        style={{ color: "#32BAFF" }}
-                      >
-                        {data.status === "Block" && (
-                          <>
-                            <div
-                              className="w-3 h-3 rounded-full"
-                              style={{ backgroundColor: "#32BAFF" }}
-                            >
-                              {" "}
-                            </div>
-                            {data.occurrence}
-                            {"  "}
-                            {data.status}
-                          </>
-                        )}
+                      {/* ===Blank=== */}
+                      <div className="flex items-center justify-between">
+                        <div className="flex justify-center items-center gap-2">
+                          <div className="bg-blank rounded-full w-4 h-4"></div>
+                          <h1 className="text-blank font-semibold">
+                            {
+                              testCases.filter((element) => {
+                                return element.status === "Blank";
+                              }).length
+                            }{" "}
+                            Blank
+                          </h1>
+                        </div>
+                        <div className="text-blank text-sm">
+                          (
+                          {Math.round(
+                            (testCases.filter((element) => {
+                              return element.status === "Blank";
+                            }).length /
+                              testCases.length) *
+                              100
+                          )}
+                          {"% "}
+                          set to Blank)
+                        </div>
                       </div>
-                    </>
-                  );
-                })}
-              </div> */}
+                    </div>
+                  </>
+                )}
+              </div>
             </div>
           </div>
 
@@ -382,23 +435,36 @@ function TestExecution() {
                   <div>
                     {testCaseTable.map((data, i) => {
                       return (
-                        <>
+                        <div key={data?._id}>
                           {data?._id === tableId && (
                             <>
                               <div className="bg-white border px-4 py-2 rounded-lg shadow-sm flex justify-between items-center">
                                 {data?._id === tableId && data?.tablename}
-                                <img
-                                  src={plusBlue}
-                                  onClick={() => {
-                                    openTableList === true
-                                      ? setopenTableList(false)
-                                      : setopenTableList(true);
-                                  }}
-                                />
+                                {openTableList ? (
+                                  <img
+                                    className="cursor-pointer"
+                                    src={minusIcon}
+                                    onClick={() => {
+                                      openTableList === true
+                                        ? setopenTableList(false)
+                                        : setopenTableList(true);
+                                    }}
+                                  />
+                                ) : (
+                                  <img
+                                    className="cursor-pointer"
+                                    src={plusBlue}
+                                    onClick={() => {
+                                      openTableList === true
+                                        ? setopenTableList(false)
+                                        : setopenTableList(true);
+                                    }}
+                                  />
+                                )}
                               </div>
                             </>
                           )}
-                        </>
+                        </div>
                       );
                     })}
                   </div>
@@ -410,21 +476,20 @@ function TestExecution() {
                   >
                     {testCaseTable.map((data, i) => {
                       return (
-                        <>
+                        <Link
+                          key={i}
+                          className={`${
+                            data?._id === tableId
+                              ? "bg-white px-4 py-2 hover:bg-blue-50 w-full"
+                              : "bg-gray-200 px-4 py-2 hover:bg-gray-300 w-full"
+                          }`}
+                          to={`/test_execution?folder=${folderId}&table=${data._id}`}
+                          onClick={() => setopenTableList(false)}
+                        >
                           {data?.assignedfolderId === folderId && (
-                            <Link
-                              className={`${
-                                data?._id === tableId
-                                  ? "bg-white px-4 py-2 hover:bg-blue-50"
-                                  : "bg-gray-100 px-4 py-2 hover:bg-gray-200"
-                              }`}
-                              to={`/test_execution?folder=${folderId}&table=${data._id}`}
-                              onClick={() => setopenTableList(false)}
-                            >
-                              {data?.tablename}
-                            </Link>
+                            <>{data?.tablename} </>
                           )}
-                        </>
+                        </Link>
                       );
                     })}
                   </div>
@@ -436,10 +501,9 @@ function TestExecution() {
                 <thead>
                   <tr className="bg-gray-100 border-b border-b-gray-300 text-left">
                     <th className="flex items-center px-2">
-                      <input type="checkbox" className="w-4" />
                       <p className="font-semibold m-2">ID</p>
                     </th>
-                    <th>
+                    <th className="w-[18rem]">
                       <p className="font-semibold border-l-2 border-l-gray-400 border-r-2 border-r-gray-400 mx-2 px-2">
                         Title
                       </p>
@@ -455,110 +519,104 @@ function TestExecution() {
                 <tbody>
                   {currentPosts.map((data, i) => {
                     return (
-                      <>
+                      <tr className="text-sm font-semibold" key={data?._id}>
                         {data.testcasetable === tableId && (
-                          <tr className="text-sm font-semibold" key={i}>
+                          <>
                             <td className="flex justify-start items-center gap-2 py-4 px-2">
-                              <input type="checkbox" className="w-4" />
                               <p className="font-semibold">
-                                {tablename}
-                                {"-"}
-                                {tableId && (
-                                  <>
-                                    {i + 1 * (currentPage * postsPerPage - 4)}
-                                  </>
-                                )}
+                                {tableId && <>{data.caseid}</>}
                               </p>
                             </td>
                             <td>
-                              <p className="border-l-2 border-l-gray-400 border-r-2 border-r-gray-400 mx-2 px-2">
+                              <p className="border-l-2 border-l-gray-400 border-r-2 border-r-gray-400 mx-2 px-2  truncate w-[18rem]">
                                 {data?.title}
                               </p>
                             </td>
-                            <td className="flex justify-center items-center gap-8 font-semibold border-r-2 border-r-gray-400 m-2">
-                              {data?.status === "Cancel" && (
-                                <span
-                                  className="w-24 text-center rounded-md text-white py-1"
-                                  style={{
-                                    backgroundColor: "#3A3541",
-                                  }}
-                                >
-                                  {data?.status}
-                                </span>
-                              )}
-                              {data?.status === "Pending" && (
-                                <span
-                                  className="w-24 text-center rounded-md text-white px-4 py-1"
-                                  style={{ backgroundColor: "#EB7A12" }}
-                                >
-                                  {data?.status}
-                                </span>
-                              )}
-                              {data?.status === "Blank" && (
-                                <span
-                                  className="w-24 text-center rounded-md text-white px-4 py-1"
-                                  style={{ backgroundColor: "#DADADA" }}
-                                >
-                                  {data?.status}
-                                </span>
-                              )}
-                              {data?.status === "False" && (
-                                <span
-                                  className="w-24 text-center rounded-md text-white px-4 py-1"
-                                  style={{ backgroundColor: "#FF4C51" }}
-                                >
-                                  {data?.status}
-                                </span>
-                              )}
-                              {data?.status === "Pass" && (
-                                <span
-                                  className="w-24 text-center rounded-md text-white px-4 py-1"
-                                  style={{ backgroundColor: "#56CA00" }}
-                                >
-                                  {data?.status}
-                                </span>
-                              )}
-                              {data?.status === "Block" && (
-                                <span
-                                  className="w-24 text-center rounded-md text-white px-4 py-1"
-                                  style={{ backgroundColor: "#32BAFF" }}
-                                >
-                                  {data?.status}
-                                </span>
-                              )}
+                            <td className="flex items-center font-semibold border-r-2 border-r-gray-400 m-2">
                               <Link
                                 onClick={() => {
                                   setup(true);
                                 }}
-                                to={`/test_execution?folder=${folderId}&table=${tableId}&case=${
-                                  data._id
-                                }&id=${
-                                  i + 1 * (currentPage * postsPerPage - 4)
-                                }`}
+                                to={`/test_execution?folder=${folderId}&table=${tableId}&case=${data._id}&id=${data.caseid}`}
+                                className="w-24 flex justify-center items-center"
                               >
-                                <img
-                                  src={editpenblack}
-                                  className="border-b-2 border-b-gray-500"
-                                />
+                                {data?.status === "Cancel" && (
+                                  <span
+                                    className="w-24 text-center rounded-md text-white py-1"
+                                    style={{
+                                      backgroundColor: "#3A3541",
+                                    }}
+                                  >
+                                    {data?.status}
+                                  </span>
+                                )}
+                                {data?.status === "Pending" && (
+                                  <span
+                                    className="w-24 text-center rounded-md text-white py-1"
+                                    style={{ backgroundColor: "#EB7A12" }}
+                                  >
+                                    {data?.status}
+                                  </span>
+                                )}
+                                {data?.status === "Blank" && (
+                                  <span
+                                    className="w-24 text-center rounded-md text-white py-1"
+                                    style={{ backgroundColor: "#DADADA" }}
+                                  >
+                                    {data?.status}
+                                  </span>
+                                )}
+                                {data?.status === "False" && (
+                                  <span
+                                    className="w-24 text-center rounded-md text-white py-1"
+                                    style={{ backgroundColor: "#FF4C51" }}
+                                  >
+                                    {data?.status}
+                                  </span>
+                                )}
+                                {data?.status === "Pass" && (
+                                  <span
+                                    className="w-24 text-center rounded-md text-white py-1"
+                                    style={{ backgroundColor: "#56CA00" }}
+                                  >
+                                    {data?.status}
+                                  </span>
+                                )}
+                                {data?.status === "Block" && (
+                                  <span
+                                    className="w-24 text-center rounded-md text-white py-1"
+                                    style={{ backgroundColor: "#32BAFF" }}
+                                  >
+                                    {data?.status}
+                                  </span>
+                                )}
                               </Link>
                             </td>
-                          </tr>
+                          </>
                         )}
-                      </>
+                      </tr>
                     );
                   })}
                   <tr></tr>
                 </tbody>
               </table>
               <div className="flex justify-end items-center gap-4">
-                <ReactPagination
-                  pageCount={pageCount}
-                  handlePageClick={handlePageClick}
-                />
-                <TotalNo
-                  tablename={"Test Cases"}
-                  totalnumber={testCases?.length}
-                />
+                <div className="flex justify-end items-center gap-4 my-6 w-full">
+                  <div className="flex justify-center items-center gap-2">
+                    <h1>Rows per page: 5</h1> <img src={arrowdown} />
+                  </div>
+                  <TotalNo
+                    tablename={"Test Cases"}
+                    totalnumber={testCases?.length}
+                  />
+
+                  <div className="flex items-center gap-2">
+                    <ReactPagination
+                      pageCount={pageCount}
+                      handlePageClick={handlePageClick}
+                    />
+                  </div>
+                </div>
               </div>
             </div>
           ) : (
@@ -570,20 +628,23 @@ function TestExecution() {
           )}
         </div>
 
-        {/* ===============File-Details=========== */}
+        {/* ===============Edit-Case[Test Execution]=========== */}
         {caseId ? (
-          <div className="px-6 py-8 w-full xl:w-6/12">
+          <div className="px-6 py-8 w-full xl:w-6/12 h-[42rem] overflow-auto">
             <div className="flex justify-between items-center text-xl font-semibold">
               <div className="flex justify-center items-center gap-4 text-xl text-textdark">
-                <p className="text-2xl">{"<"}</p>
+                <Link
+                  to={`/test_execution?folder=${folderId}&table=${tableId}`}
+                  className="text-2xl"
+                >
+                  {"<"}
+                </Link>
                 <h1 className="flex items-center gap-2">
-                  {tablename}
-                  {"-"}
                   {currentCaseId}
-                  <img
+                  {/* <img
                     src={editpenblack}
                     className="border-b-2 border-b-gray-500"
-                  />
+                  /> */}
                 </h1>
               </div>
             </div>
@@ -592,8 +653,6 @@ function TestExecution() {
               <label className="w-6/12">ID</label>
 
               <h2 className="w-6/12 border border-gray-400 p-2">
-                {tablename}
-                {"-"}
                 {currentCaseId}
               </h2>
             </div>
@@ -670,10 +729,12 @@ function TestExecution() {
             <Formik
               enableReinitialize={true}
               initialValues={{
-                status: testcase?.status,
-                results: testcase?.results,
-                description: testcase?.description,
-                assignedstaff: testcase?.assignedstaff,
+                status: testcase?.status ? testcase?.status : "",
+                results: testcase?.results ? testcase?.results : "",
+                description: testcase?.description ? testcase?.description : "",
+                assignedstaff: testcase?.assignedstaff
+                  ? testcase?.assignedstaff
+                  : "",
               }}
               validationSchema={Yup.object().shape({
                 status: Yup.string().required("Required field"),
@@ -806,9 +867,12 @@ function TestExecution() {
                 </div>
 
                 <div className="flex justify-end items-center gap-12 mt-4 text-sm">
-                  <h1 className="bg-red-600 px-4 py-2 text-white rounded-sm hover:bg-red-700">
+                  <Link
+                    to={`/test_execution?folder=${folderId}&table=${tableId}`}
+                    className="bg-red-600 px-4 py-2 text-white rounded-sm hover:bg-red-700"
+                  >
                     Cancel
-                  </h1>
+                  </Link>
                   <button
                     className="bg-green-600 px-4 py-2 text-white rounded-sm hover:bg-green-900"
                     type="submit"

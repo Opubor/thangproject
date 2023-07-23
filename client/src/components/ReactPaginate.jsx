@@ -6,19 +6,20 @@ function ReactPagination({ pageCount, handlePageClick }) {
     <>
       <ReactPaginate
         breakLabel="..."
-        nextLabel=">>"
-        nextClassName="hover:bg-primary"
+        nextLabel=">"
+        nextClassName="bg-gray-300 rounded-sm font-extrabold mx-2 hover:bg-gray-400"
         onPageChange={handlePageClick}
         pageRangeDisplayed={5}
         pageCount={pageCount}
-        previousLabel="<<"
-        previousClassName="hover:bg-primary"
+        previousLabel="<"
+        previousClassName="bg-gray-300 rounded-sm font-extrabold mx-2 hover:bg-gray-400"
         renderOnZeroPageCount={null}
         containerClassName="flex my-4 text-base"
         pageLinkClassName="bg-gray-100 px-2 hover:bg-primary"
         previousLinkClassName="px-2"
         nextLinkClassName="px-2"
-        activeLinkClassName="bg-indigo-900 text-white dark:text-white"
+        activeLinkClassName="border-2 border-indigo-900 bg-white rounded-sm"
+        className="bg-white rounded-sm mx-2 flex"
       />
     </>
   );

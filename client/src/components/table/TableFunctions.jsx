@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import filter from "../../assets/Vector (24).png";
 import addPage from "../../assets/add-page.png";
 import sort from "../../assets/sort.png";
@@ -6,8 +6,6 @@ import exportCylinders from "../../assets/database-export.png";
 import cancel from "../../assets/cancel.png";
 import attachDoc from "../../assets/attachDoc.png";
 import filterlist from "../../assets/filter-list.png";
-import uilpadlock from "../../assets/uilpadlock.png";
-import deleteCircle from "../../assets/delete-circle.png";
 import * as XLSX from "xlsx";
 import axios from "../../sevices/axios";
 import { Formik, Field, Form, ErrorMessage, useFormik } from "formik";
@@ -26,7 +24,13 @@ function TableFunctions({
   fetchAll,
   submitFilter,
   reloadTestCase,
+  tablename,
 }) {
+  // Getting Query From URL
+  let getdetails = useLocation().search;
+  const folderId = new URLSearchParams(getdetails).get("folder");
+  const tableId = new URLSearchParams(getdetails).get("table");
+
   const [importExport, setImportExport] = useState(false);
   const [afterExport, setAfterExport] = useState(false);
   const [afterImport, setAfterImport] = useState(false);
@@ -34,24 +38,27 @@ function TableFunctions({
   const [openFilter, setopenFilter] = useState(false);
   const [loading, setLoading] = useState(false);
   const [staffs, setStaffs] = useState([]);
-  const [pictureReport, setPictureReport] = useState(null);
+  const [ImportTestCase, setImportTestCase] = useState(null);
 
-  // handlePictureChange ====================================
-  const handlePictureChange = (event) => {
-    setPictureReport(event.target.files[0]);
+  // handleImportTestCase ========================
+  const handleImportTestCase = (event) => {
+    setImportTestCase(event.target.files[0]);
   };
-  // Submit Picture =========================================
+  // Import Test Case ============================
   const handleImport = (event) => {
     event.preventDefault();
     setLoading(true);
     const formData = new FormData();
-    formData.append("importFile", pictureReport);
+    formData.append("importFile", ImportTestCase);
     axios
-      .post(`/importTestCase`, formData)
+      .post(
+        `/importTestCase?testcasetable=${tableId}&assignedfolderId=${folderId}`,
+        formData
+      )
       .then((res) => {
-        // getIncidents();
-        // setLoading(false);
+        setLoading(false);
         toast.success(res.data);
+        window.location.reload(true);
       })
       .catch((err) => {
         setLoading(false);
@@ -59,6 +66,9 @@ function TableFunctions({
         toast.error(err.response.data);
       });
   };
+  // ===========================================
+
+  // Export Test Case============================
   const title = [
     "Priority",
     "Title",
@@ -72,45 +82,20 @@ function TableFunctions({
     "Results",
   ];
   const titleDisplay = {
-    priority: "Priority",
-    title: "Title",
-    teststep: "Test Step",
-    precondition: "Precondition",
+    caseid: "Test Case",
     category: "Category",
-    status: "Status Case",
+    title: "Title",
+    priority: "Priority",
+    precondition: "Precondition",
+    teststep: "Test Step",
     expectations: "Expectations",
-    assignedstaffname: "Assigned Staff",
-    description: "Description",
+    status: "Status Case",
     results: "Results",
+    description: "Description",
+    assignedstaffname: "Assigned Staff",
   };
 
   const newTitleData = [titleDisplay, ...sheetdata];
-
-  // const handleExport = () => {
-  //   let wb = XLSX.utils.book_new();
-  //   let worksheet = XLSX.utils.json_to_sheet(newTitleData, {
-  //     header: title,
-  //     origin: "A2",
-  //     skipHeader: true,
-  //   });
-  //   worksheet["L4"] = {
-  //     font: {
-  //       bold: true,
-  //     },
-  //     alignment: {
-  //       horizontal: "center",
-  //     },
-  //   };
-  //   const workbook = {
-  //     SheetNames: ["sheet_1"],
-  //     Sheets: {
-  //       sheet_1: worksheet,
-  //     },
-  //   };
-
-  //   XLSX.utils.book_append_sheet(workbook, worksheet, "MySheet1");
-  //   XLSX.writeFile(workbook, "testcase.xlsx");
-  // };
   const handleExport = () => {
     let wb = XLSX.utils.book_new();
     let ws = XLSX.utils.json_to_sheet(newTitleData, {
@@ -119,8 +104,12 @@ function TableFunctions({
     });
 
     XLSX.utils.book_append_sheet(wb, ws, "MySheet1");
-    XLSX.writeFile(wb, "testcase.xlsx");
+    XLSX.writeFile(wb, `testcase.csv`);
   };
+
+  // ===========================================
+
+  // Get Staffs================================
   function getStaffs() {
     axios
       .get("/staff")
@@ -131,9 +120,86 @@ function TableFunctions({
         console.log(response.data);
       });
   }
+  // =======================================
+
+  let sortRef = useRef();
+  let filterRef = useRef();
+  let importExportRef = useRef();
+  let exportRef = useRef();
+  let importRef = useRef();
+  function sortModal() {
+    let closeSortModal = (e) => {
+      if (sortRef.current != null) {
+        if (!sortRef.current.contains(e.target)) {
+          return setopenSort(false);
+        }
+      }
+    };
+    document.addEventListener("mousedown", closeSortModal);
+    return () => {
+      document.removeEventListener("mousedown", closeSortModal);
+    };
+  }
+  function filterModal() {
+    let closeFilterModal = (e) => {
+      if (filterRef.current != null) {
+        if (!filterRef.current.contains(e.target)) {
+          return setopenFilter(false);
+        }
+      }
+    };
+    document.addEventListener("mousedown", closeFilterModal);
+    return () => {
+      document.removeEventListener("mousedown", closeFilterModal);
+    };
+  }
+  function importExportModal() {
+    let closeImportExportModal = (e) => {
+      if (importExportRef.current != null) {
+        if (!importExportRef.current.contains(e.target)) {
+          return setImportExport(false);
+        }
+      }
+    };
+    document.addEventListener("mousedown", closeImportExportModal);
+    return () => {
+      document.removeEventListener("mousedown", closeImportExportModal);
+    };
+  }
+  function exportModal() {
+    let closeExportModal = (e) => {
+      if (exportRef.current != null) {
+        if (!exportRef.current.contains(e.target)) {
+          return setAfterExport(false);
+        }
+      }
+    };
+    document.addEventListener("mousedown", closeExportModal);
+    return () => {
+      document.removeEventListener("mousedown", closeExportModal);
+    };
+  }
+  function importModal() {
+    let closeImportModal = (e) => {
+      if (importRef.current != null) {
+        if (!importRef.current.contains(e.target)) {
+          return setAfterImport(false);
+        }
+      }
+    };
+    document.addEventListener("mousedown", closeImportModal);
+    return () => {
+      document.removeEventListener("mousedown", closeImportModal);
+    };
+  }
 
   useEffect(() => {
     getStaffs();
+    sortModal();
+    filterModal();
+    importExportModal();
+    exportModal();
+    importModal();
   }, []);
 
   return (
@@ -148,6 +214,7 @@ function TableFunctions({
           >
             <img src={addPage} />
           </div>
+
           <div
             className="border border-gray-300 p-2 cursor-pointer hover:bg-gray-100"
             onClick={() => {
@@ -156,6 +223,7 @@ function TableFunctions({
           >
             <img src={sort} />
           </div>
+
           <div
             className="border border-gray-300 p-2 cursor-pointer hover:bg-gray-100"
             style={{ padding: "10px" }}
@@ -165,6 +233,7 @@ function TableFunctions({
           >
             <img src={filter} />
           </div>
+
           <div className="border border-gray-300 p-2 rounded-tr-lg rounded-br-lg cursor-pointer hover:bg-gray-100">
             <img
               src={exportCylinders}
@@ -174,8 +243,11 @@ function TableFunctions({
                   : setImportExport(true)
               }
             />
-            {/* =======ImportExportModal======== */}
+
+            {/* =================Modals===================== */}
+            {/* =======ImportExportModai======== */}
             <div
+              ref={importExportRef}
               className={`bg-gray-200 rounded-xl shadow shadow-lg text-sm text-center fixed right-8 w-32  ${
                 importExport ? "block" : "hidden"
               }`}
@@ -200,13 +272,18 @@ function TableFunctions({
                 </button>
               </div>
             </div>
+            {/* ================================ */}
+
             {/* ========Export======== */}
             <div
               className={`bg-black bg-opacity-70 absolute z-50 left-0 right-0 top-0 flex flex-col justify-center items-center h-screen ${
                 afterExport ? "flex" : "hidden"
               }`}
             >
-              <div className="bg-white px-8 py-4 w-80 shadow shadow-2xl">
+              <div
+                className="bg-white px-8 py-4 w-80 shadow shadow-2xl"
+                ref={exportRef}
+              >
                 <div className="text-center mb-8 ">
                   <h1 className="text-base font-semibold mb-1">Export File</h1>
                   <p className="text-sm">
@@ -231,13 +308,18 @@ function TableFunctions({
                 </div>
               </div>
             </div>
+            {/* ================================ */}
+
             {/* ========Import======== */}
             <div
               className={`bg-black bg-opacity-70 absolute z-50 left-0 right-0 top-0 flex flex-col justify-center items-center h-screen ${
                 afterImport ? "flex" : "hidden"
               }`}
             >
-              <div className="bg-white pl-8 w-4/12 shadow shadow-2xl pb-12">
+              <div
+                className="bg-white pl-8 w-4/12 shadow shadow-2xl pb-12"
+                ref={importRef}
+              >
                 <div className="flex justify-end items-center pt-4 pb-8 pr-4 pl-4">
                   <img
                     src={cancel}
@@ -259,10 +341,14 @@ function TableFunctions({
                     <label className="font-semibold mb-2">Attachments</label>
                     <label
                       htmlFor="attachment"
-                      className="w-full border border-gray-400 border-dotted rounded-lg py-2 flex justify-center items-center gap-2"
+                      className="w-full border border-gray-400 border-dotted rounded-lg py-2 flex justify-center items-center gap-2 cursor-pointer"
                     >
                       <img src={attachDoc} className="w-8" />
-                      <p>Text.DOC</p>
+                      <p>
+                        {ImportTestCase?.name
+                          ? ImportTestCase?.name
+                          : "Select CSV file"}
+                      </p>
                     </label>
                     <p className="text-gray-400 text-sm">Attach your file</p>
                     <input
@@ -270,7 +356,7 @@ function TableFunctions({
                       name="importFile"
                       className="block border border-gray-200 rounded-md p-2 sr-only"
                       id="attachment"
-                      onChange={handlePictureChange}
+                      onChange={handleImportTestCase}
                     />
                   </div>
                   <div className="flex justify-center items-center gap-12 mt-8 pr-8">
@@ -289,45 +375,51 @@ function TableFunctions({
                 </form>
               </div>
             </div>
+            {/* ================================ */}
+
             {/* ========Sort======== */}
             <div
               className={`bg-white rounded-md shadow-xl text-sm text-center fixed right-8 p-4 ${
                 openSort ? "block" : "hidden"
               }`}
+              ref={sortRef}
             >
               <h1 className="font-semibold text-md mb-2">Sort: Priority</h1>
               <div className="flex flex-col gap-2 w-44">
                 <h1
-                  className="border-2 border-gray-400 py-1 hover:bg-gray-100"
+                  className="px-8 py-1 bg-red-600 rounded-full text-white hover:bg-red-700"
                   onClick={sortHigh}
                 >
                   High
                 </h1>
                 <h2
-                  className="border-2 border-gray-400 py-1 hover:bg-gray-100"
+                  className="px-8 py-1 bg-yellow-500 rounded-full text-white hover:bg-yellow-400"
                   onClick={sortMedium}
                 >
                   Medium
                 </h2>
                 <h3
-                  className="border-2 border-gray-400 py-1 hover:bg-gray-100"
+                  className="px-8 py-1 bg-green-500 rounded-full text-white hover:bg-green-600"
                   onClick={sortLow}
                 >
                   Low
                 </h3>
                 <h3
-                  className="text-white bg-gray-500 py-1 hover:bg-gray-400"
+                  className="text-white bg-gray-500 py-1 hover:bg-gray-400 rounded-full"
                   onClick={fetchAll}
                 >
                   All
                 </h3>
               </div>
             </div>
+            {/* ================================ */}
+
             {/* =======Filter====== */}
             <div
               className={`bg-white border-2 border-gray-200 shadow-xl text-sm text-center fixed right-8 p-6 w-64 ${
                 openFilter ? "block" : "hidden"
               }`}
+              ref={filterRef}
             >
               <div className="flex justify-between items-center mb-8">
                 <h1 className="font-semibold text-xl">Filter</h1>
@@ -361,10 +453,16 @@ function TableFunctions({
                       name="priority"
                       className="border rounded-lg p-2 w-full"
                     >
-                      <option>Select Priority</option>
-                      <option value="High">High</option>
-                      <option value="Medium">Medium</option>
-                      <option value="Low">Low</option>
+                      <option value="">Select Priority</option>
+                      <option value="High" className="bg-red-500">
+                        High
+                      </option>
+                      <option value="Medium" className="bg-yellow-500">
+                        Medium
+                      </option>
+                      <option value="Low" className="bg-green-500">
+                        Low
+                      </option>
                     </Field>
                     <ErrorMessage
                       component="label"
@@ -394,10 +492,10 @@ function TableFunctions({
                       name="assignedstaff"
                       className="border rounded-lg p-2 w-full"
                     >
-                      <option>Select Staff</option>
+                      <option value="">Select Staff</option>
                       {staffs.map((data, i) => {
                         return (
-                          <option value={data?._id} key={i}>
+                          <option value={data?._id} key={data?._id}>
                             {data?.name}
                           </option>
                         );

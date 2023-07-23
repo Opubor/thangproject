@@ -1,17 +1,36 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import AddFolder from "./folders/AddFolder";
 import Footer from "./Footer";
 import Navbar from "./Navbar";
 import Sidebar from "./Sidebar";
-import RenameFolder from "./folders/RenameFolder";
 import AvatarDropdown from "./AvatarDropdown";
 import TopNavbar from "./TopNavbar";
+import { useEffect } from "react";
 
 function DefaultLayout({ children }) {
   const [openAvatarDropdown, setOpenAvatarDropdown] = useState(false);
   const [openSidebar, setOpenSidebar] = useState(false);
   const [openAddFolderModal, setOpenAddFolderModal] = useState(false);
   const [openRenameFolderModal, setopenRenameFolderModal] = useState(false);
+
+  let dropDownRef = useRef();
+  function userDropDown() {
+    let closeUserDropDown = (e) => {
+      if (dropDownRef.current != null) {
+        if (!dropDownRef.current.contains(e.target)) {
+          return setOpenAvatarDropdown(false);
+        }
+      }
+    };
+    document.addEventListener("mousedown", closeUserDropDown);
+    return () => {
+      document.removeEventListener("mousedown", closeUserDropDown);
+    };
+  }
+
+  useEffect(() => {
+    userDropDown();
+  }, []);
 
   return (
     <div className="w-full">
@@ -27,7 +46,10 @@ function DefaultLayout({ children }) {
         }}
       />
       {/* =========Avatar Dropdown========== */}
-      <AvatarDropdown styles={openAvatarDropdown ? "block" : "hidden"} />
+      <AvatarDropdown
+        styles={openAvatarDropdown ? "block" : "hidden"}
+        userDropDownRef={dropDownRef}
+      />
 
       {/* =============Sidebar/Navbar============= */}
       <div className="w-full bg-themegray pb-4 flex justify-between mt-12">

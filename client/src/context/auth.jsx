@@ -18,8 +18,8 @@ export function LoginProvider({ children }) {
     } catch (error) {
       setLoggedIn(false);
       localStorage.removeItem("token");
-      setUser(null);
-      return console.log(error);
+      return setUser(null);
+      // return console.log(error);
     }
   }
 

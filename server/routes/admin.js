@@ -224,14 +224,14 @@ router.get('/staff', async function(req,res,next){
 
 // FIRE-BASE : FIRE-BASE : FIRE-BASE : FIRE-BASE
 const firebaseConfig = {
-    apiKey: "AIzaSyAL6tFDnBhbOO7_ejvsOI1qlMR-fvl6g8o",
-    authDomain: "kalinga-23865.firebaseapp.com",
-    projectId: "kalinga-23865",
-    storageBucket: "kalinga-23865.appspot.com",
-    messagingSenderId: "922179444759",
-    appId: "1:922179444759:web:927b7b995c45e37d263c52",
-    measurementId: "G-GHJ3QSVJD8"
+    apiKey: "AIzaSyAGXnNtimtVDa4b2yCMOe7WzYVZQ1zrLEU",
+    authDomain: "thang-mgt.firebaseapp.com",
+    projectId: "thang-mgt",
+    storageBucket: "thang-mgt.appspot.com",
+    messagingSenderId: "941055703089",
+    appId: "1:941055703089:web:38e659f79027eec381fd10"
   };
+
 initializeApp(firebaseConfig);
 const storage = getStorage();
 const upload = multer({storage: multer.memoryStorage()});
@@ -343,7 +343,7 @@ router.get('/testexecution', async function(req,res,next){
 router.get('/exportData', async function(req,res,next){
     try {        
         const {tableid} = req.query
-        let exportData = await TestCase.find({testcasetable:tableid}, {status: 1,priority:1, title:1,teststep:1,precondition:1,category:1,expectations:1,description:1,results:1,assignedstaffname:1,_id:0}).sort({_id : 'descending'})
+        let exportData = await TestCase.find({testcasetable:tableid}, {status: 1,priority:1, title:1,teststep:1,precondition:1,category:1,expectations:1,description:1,results:1,assignedstaffname:1,caseid:1,_id:0}).sort({_id : 'descending'})
         return res.json(exportData)
     } catch (error) {
         return res.status(401).send(error.message)

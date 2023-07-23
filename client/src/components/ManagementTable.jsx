@@ -3,11 +3,7 @@ import { Link, useLocation } from "react-router-dom";
 import pages from "../assets/pages.png";
 import multiple from "../assets/multiple-pages-add.png";
 import axios from "../sevices/axios";
-import Table from "./table/Table";
 import dotsIcon from "../assets/Vector (21).png";
-import deleteIcon from "../assets/delete-circle.png";
-import leftArrow from "../assets/Vector (16).png";
-import rightArrow from "../assets/Vector (17).png";
 import arrowdown from "../assets/arrowdown.png";
 import TableFunctions from "./table/TableFunctions";
 import SearchInput from "./SearchInput";
@@ -16,6 +12,7 @@ import TotalNo from "./TotalNo";
 import BreadCrumb from "./BreadCrumb";
 import { BiDownArrow } from "react-icons/bi";
 import { BiUpArrow } from "react-icons/bi";
+import { AiTwotoneDelete } from "react-icons/ai";
 
 const ManagementTable = ({
   testCaseTableFunction,
@@ -32,15 +29,19 @@ const ManagementTable = ({
   const [currentPage, setCurrentPage] = useState(1);
   const [exportData, setExportData] = useState([]);
 
-  // Getting Query From URL
+  // Getting Query From URL======================
   let search = useLocation().search;
   let folderId = new URLSearchParams(search).get("folder");
   let tableId = new URLSearchParams(search).get("table");
+  // ====================================
 
+  // Active classes=====================
   const activeClasses =
     "border-b-2 border-b-blue-700 text-blue-700 font-semibold";
   const inactiveClasses = "text-textgray";
+  // ===================================
 
+  // Get Test Case Table=================
   const getTestCaseTable = () => {
     axios
       .get("/testcasetable")
@@ -48,7 +49,7 @@ const ManagementTable = ({
         setTestCaseTable(response?.data);
         setTablename(
           response?.data.map((data, i) => {
-            return <>{tableId === data._id && data?.tablename}</>;
+            return tableId === data._id && data?.tablename;
           })
         );
       })
@@ -56,26 +57,29 @@ const ManagementTable = ({
         console.log(response.data);
       });
   };
-  // GET TEST CASES
+  // ===================================
+
+  // Get test cases=====================
   const getTestCases = () => {
     axios
       .get(`/testcase?tableid=${tableId}`)
       .then((response) => {
         setTestCases(response?.data);
-        console.log(response?.data);
       })
       .catch((response) => {
         console.log(response.data);
       });
   };
-  // GET FOLDERS
+  // ===================================
+
+  // Get folders========================
   function getFolders() {
     axios
       .get("/folders")
       .then((response) => {
         setFoldername(
           response?.data.map((data, i) => {
-            return <>{folderId === data._id && data?.foldername}</>;
+            return folderId === data._id && data?.foldername;
           })
         );
       })
@@ -83,7 +87,9 @@ const ManagementTable = ({
         console.log(response.data);
       });
   }
-  // SEARCH
+  // ===================================
+
+  // Search============================
   const searchTable = (data) => {
     axios.get(`/testcase?q=${data}&tableid=${tableId}`).then((response) => {
       setTestCases(response.data);
@@ -91,7 +97,9 @@ const ManagementTable = ({
       setCurrentPage(1);
     });
   };
-  // SORT_HIGH
+  // ===================================
+
+  // Sort high==========================
   const sortPriorityHigh = (data) => {
     axios.get(`/testcase?sortHigh=High&tableid=${tableId}`).then((response) => {
       setTestCases(response.data);
@@ -99,25 +107,29 @@ const ManagementTable = ({
       setCurrentPage(1);
     });
   };
-  // SORT_MEDIUM
+  // ===================================
+
+  // Sort medium========================
   const sortPriorityMedium = (data) => {
     axios
       .get(`/testcase?sortMedium=Medium&tableid=${tableId}`)
       .then((response) => {
         setTestCases(response.data);
-        console.log(response.data);
         setCurrentPage(1);
       });
   };
-  // SORT_LOW
+  // ===================================
+
+  // Sort low==========================
   const sortPriorityLow = (data) => {
     axios.get(`/testcase?sortLow=Low&tableid=${tableId}`).then((response) => {
       setTestCases(response.data);
-      console.log(response.data);
       setCurrentPage(1);
     });
   };
-  // SORT_ASCENDING
+  // ===================================
+
+  // Sort ascending====================
   const sortAscending = (data) => {
     axios
       .get(`/testcase?sortAsc=ascending&tableid=${tableId}`)
@@ -126,7 +138,9 @@ const ManagementTable = ({
         setCurrentPage(1);
       });
   };
-  // SORT_DESCENDING
+  // ===================================
+
+  // Sort descending====================
   const sortDescending = (data) => {
     axios
       .get(`/testcase?sortDsc=descending&tableid=${tableId}`)
@@ -135,7 +149,9 @@ const ManagementTable = ({
         setCurrentPage(1);
       });
   };
-  // FILTER
+  // ===================================
+
+  // Filter============================
   const submitFilter = (values, actions) => {
     axios
       .get(
@@ -150,6 +166,7 @@ const ManagementTable = ({
       });
     actions.setSubmitting(false);
   };
+  // ===================================
 
   const handleExportData = () => {
     axios
@@ -192,7 +209,7 @@ const ManagementTable = ({
       <TableFunctions
         search={
           <>
-            <SearchInput onSearch={searchTable} />
+            <SearchInput onSearch={searchTable} placeholder="Search by Title" />
           </>
         }
         setopenAddCaseModal={setopenAddCaseModal}
@@ -203,13 +220,16 @@ const ManagementTable = ({
         sheetdata={exportData}
         submitFilter={submitFilter}
         reloadTestCase={getTestCases}
+        tablename={tablename}
       />
 
+      {/* ===============Test Management Table=============== */}
       <div className="rounded-sm border-b border-stroke bg-white shadow-default mt-4">
         <div className="flex flex-wrap gap-2 border-b border-stroke bg-white ">
+          {/* =============Test Tables Tabs============= */}
           {testCaseTable.map((tab, i) => {
             return (
-              <>
+              <div key={tab?._id}>
                 {tab?.assignedfolderId === folderId && (
                   <Link
                     key={tab?._id}
@@ -225,22 +245,24 @@ const ManagementTable = ({
                     {tab.tablename}
                   </Link>
                 )}
-              </>
+              </div>
             );
           })}
-          <div className="py-1 px-4 ml-8">
+          {/* ========Add Test Case Table Button========= */}
+          <div className="py-1 px-2">
             <button>
               <img src={multiple} onClick={testCaseTableFunction} />
             </button>
           </div>
+          {/* ================================== */}
         </div>
 
+        {/* ==============Test Case Table============= */}
         <table className="w-full">
           <thead>
             <tr className="bg-gray-100 border-b border-b-gray-300 text-left">
               <th className="flex items-center justify-between px-2">
                 <div className="flex items-center">
-                  <input type="checkbox" className="w-4" />
                   <p className="font-semibold m-2">ID</p>
                 </div>
                 <div className="flex flex-col items-center justify-end gap-1">
@@ -254,7 +276,7 @@ const ManagementTable = ({
                   </button>
                 </div>
               </th>
-              <th>
+              <th className="w-[32rem]">
                 <p className="font-semibold border-l border-l-gray-200 border-r border-r-gray-200 mx-2 px-2">
                   Title
                 </p>
@@ -274,67 +296,88 @@ const ManagementTable = ({
                   Assiged To
                 </p>
               </th>
-              <th className="w-4">
-                <p>
-                  <img src={dotsIcon} />
-                </p>
-              </th>
             </tr>
           </thead>
           <tbody>
             {currentPosts.map((data, i) => {
               return (
-                <>
+                <tr
+                  className="text-sm font-semibold border-b-2 border-b-300"
+                  key={data._id}
+                >
                   {data.testcasetable === tableId && (
-                    <tr
-                      className="text-sm font-semibold border-b-2 border-b-300"
-                      key={i}
-                    >
-                      <td className="flex justify-start items-center gap-2 py-4 px-2">
-                        <input type="checkbox" className="w-4" />
-                        <p className="font-semibold">
-                          {tablename}
-                          {"-"}
-                          {tableId && (
-                            <>{i + 1 * (currentPage * postsPerPage - 9)}</>
-                          )}
-                        </p>
+                    <>
+                      <td className=" py-4 px-2">
+                        <Link
+                          to={`/test_management?caseId=${data._id}&id=${data?.caseid}&folder=${folderId}&table=${tableId}`}
+                          className="w-full"
+                          onClick={setOpenEditModal}
+                        >
+                          <p className="font-semibold">{data?.caseid}</p>
+                        </Link>
                       </td>
                       <td>
-                        <p className="border-l border-l-gray-200 border-r border-r-gray-200 mx-2 px-2">
-                          {data?.title}
-                        </p>
+                        <Link
+                          to={`/test_management?caseId=${data._id}&id=${data?.caseid}&folder=${folderId}&table=${tableId}`}
+                          className="w-full"
+                          onClick={setOpenEditModal}
+                        >
+                          <p className="border-l border-l-gray-200 border-r border-r-gray-200 mx-2 px-2 truncate w-[32rem]">
+                            {data?.title}
+                          </p>
+                        </Link>
                       </td>
                       <td>
-                        <p className="font-semibold border-r border-r-gray-200 m-2">
-                          {data?.category}
-                        </p>
+                        <Link
+                          to={`/test_management?caseId=${data._id}&id=${data?.caseid}&folder=${folderId}&table=${tableId}`}
+                          className="w-full"
+                          onClick={setOpenEditModal}
+                        >
+                          <p className="font-semibold border-r border-r-gray-200 m-2">
+                            {data?.category}
+                          </p>
+                        </Link>
                       </td>
                       <td>
                         <div className="border-r border-r-gray-200 m-2">
-                          {data?.priority === "High" && (
-                            <button className="px-8 py-1 bg-red-600 rounded-full text-white w-32 ">
-                              {data?.priority}
-                            </button>
-                          )}
-                          {data?.priority === "Medium" && (
-                            <button className="px-8 py-1 bg-yellow-500 rounded-full text-white w-32 ">
-                              {data?.priority}
-                            </button>
-                          )}
-                          {data?.priority === "Low" && (
-                            <button className="px-8 py-1 bg-green-500 rounded-full text-white w-32 ">
-                              {data?.priority}
-                            </button>
-                          )}
+                          <Link
+                            to={`/test_management?caseId=${data._id}&id=${data?.caseid}&folder=${folderId}&table=${tableId}`}
+                            className="w-full"
+                            onClick={setOpenEditModal}
+                          >
+                            {data?.priority === "High" && (
+                              <button className="px-8 py-1 bg-red-600 rounded-full text-white w-32">
+                                {data?.priority}
+                              </button>
+                            )}
+                            {data?.priority === "Medium" && (
+                              <button className="px-8 py-1 bg-yellow-500 rounded-full text-white w-32">
+                                {data?.priority}
+                              </button>
+                            )}
+                            {data?.priority === "Low" && (
+                              <button className="px-8 py-1 bg-green-500 rounded-full text-white w-32">
+                                {data?.priority}
+                              </button>
+                            )}
+                          </Link>
                         </div>
                       </td>
                       <td className="flex justify-between items-center m-2">
-                        <p className="font-semibold">{data?.staff[0]?.name}</p>
                         <Link
-                          to={`/test_management?caseId=${data._id}&id=${
-                            i + 1 * (currentPage * postsPerPage - 9)
-                          }&folder=${folderId}&table=${tableId}`}
+                          to={`/test_management?caseId=${data._id}&id=${data?.caseid}&folder=${folderId}&table=${tableId}`}
+                          className="w-full"
+                        >
+                          <p
+                            className="font-semibold cursor-pointer w-full"
+                            onClick={setOpenEditModal}
+                          >
+                            {data?.assignedstaffname}
+                          </p>
+                        </Link>
+
+                        <Link
+                          to={`/test_management?caseId=${data._id}&id=${data?.caseid}&folder=${folderId}&table=${tableId}`}
                         >
                           <img
                             src={dotsIcon}
@@ -347,28 +390,37 @@ const ManagementTable = ({
                         <Link
                           to={`/test_management?deleteCase=${data._id}&folder=${folderId}&table=${tableId}`}
                         >
-                          <img
-                            src={deleteIcon}
+                          <span
                             onClick={setOpenDeleteModal}
                             className="cursor-pointer"
-                          />
+                          >
+                            {React.createElement(AiTwotoneDelete, {
+                              size: "20",
+                            })}
+                          </span>
                         </Link>
                       </td>
-                    </tr>
+                    </>
                   )}
-                </>
+                </tr>
               );
             })}
             <tr></tr>
           </tbody>
         </table>
-      </div>
-      <div className="flex justify-end items-center gap-4">
-        <ReactPagination
-          pageCount={pageCount}
-          handlePageClick={handlePageClick}
-        />
-        <TotalNo tablename={"Test Cases"} totalnumber={testCases?.length} />
+        {/* ===============Test Management Footer============== */}
+        <div className="flex justify-end items-center gap-4 my-6 w-full">
+          <div className="flex justify-center items-center gap-2">
+            <h1>Rows per page: 10</h1> <img src={arrowdown} />
+          </div>
+          <TotalNo tablename={"Test Cases"} totalnumber={testCases?.length} />
+          <div className="flex items-center gap-2">
+            <ReactPagination
+              pageCount={pageCount}
+              handlePageClick={handlePageClick}
+            />
+          </div>
+        </div>
       </div>
     </>
   );

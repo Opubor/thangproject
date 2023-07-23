@@ -1,12 +1,12 @@
 import React, { useState } from "react";
-import { Formik, Field, Form, ErrorMessage, useFormik } from "formik";
+import { Formik, Field, Form, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import { Link } from "react-router-dom";
 import ButtonPreloader from "../../components/ButtonPreloader";
 import axios from "../../sevices/axios";
 import { toast } from "react-toastify";
 import { Navigate } from "react-router-dom";
-import logo from "../../assets//Group 26942.png";
+import logo from "../../assets/fptlogo.png";
 
 function Register() {
   const [loading, setLoading] = useState(false);
@@ -39,12 +39,12 @@ function Register() {
 
   return (
     <div className=" h-screen bg-white">
-      <div className="px-36 py-4 font-bold text-xl flex items-center">
-        <img className="w-8" src={logo} />
+      <div className="px-12 md:px-36 py-4 font-bold text-xl flex items-center">
+        <img className="w-16" src={logo} />
         <h1>Test management</h1>
       </div>
-      <div className="flex justify-between items-center px-56">
-        <div className="py-52">
+      <div className="flex flex-col md:flex-row justify-between items-center md:px-56">
+        <div className="py-16 md:py-52">
           <h1 className="font-bold text-5xl mb-5">Create Account</h1>
           <p className="font-semibold text-2xl mb-6">
             Smart test management software
@@ -65,6 +65,8 @@ function Register() {
               company: "",
               password: "",
             }}
+            validateOnChange={false}
+            validateOnBlur={false}
             validationSchema={Yup.object().shape({
               name: Yup.string().required("Required field"),
               email: Yup.string().email().required("Email is required"),
@@ -129,7 +131,10 @@ function Register() {
                   className="text-sm text-red-500"
                 />
               </div>
-              <button className="bg-blue-500 py-3 text-white font-semibold w-full rounded-md mt-6 text-sm shadow shadow-2xl shadow-blue-900 hover:bg-blue-700">
+              <button
+                type="submit"
+                className="bg-blue-500 py-3 text-white font-semibold w-full rounded-md mt-6 text-sm shadow shadow-2xl shadow-blue-900 hover:bg-blue-700"
+              >
                 {loading ? <ButtonPreloader /> : "Register"}
               </button>
             </Form>

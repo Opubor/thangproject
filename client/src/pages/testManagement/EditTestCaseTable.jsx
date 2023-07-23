@@ -58,41 +58,51 @@ function EditTestCaseTable({ styles }) {
           initialValues={{
             tablename: table?.tablename,
           }}
+          validateOnMount
           validationSchema={Yup.object().shape({
             tablename: Yup.string().required("Required field"),
           })}
           onSubmit={handleSubmit}
         >
-          <Form>
-            <div className="mt-4">
-              <label className="font-semibold">Table Name</label>
-              <Field
-                className="block bg-gray-50 border border-gray-200 rounded-md p-2 w-full"
-                name={"tablename"}
-                type="text"
-              />
-              <ErrorMessage
-                component="label"
-                name="tablename"
-                className="text-sm text-red-500"
-              />
-            </div>
+          {(formik) => {
+            return (
+              <Form>
+                <div className="mt-4">
+                  <label className="font-semibold">Table Name</label>
+                  <Field
+                    className="block bg-gray-50 border border-gray-200 rounded-md p-2 w-full"
+                    name={"tablename"}
+                    type="text"
+                  />
+                  <ErrorMessage
+                    component="label"
+                    name="tablename"
+                    className="text-sm text-red-500"
+                  />
+                </div>
 
-            <div className="flex justify-center items-center gap-12 mt-8">
-              <Link
-                to={"/test_management"}
-                className="bg-red-600 px-4 py-2 text-white rounded-md hover:bg-red-700 cursor-pointer"
-              >
-                Cancel
-              </Link>
-              <button
-                className="bg-green-600 px-4 py-2 text-white rounded-md hover:bg-green-900"
-                type="submit"
-              >
-                {loading ? <ButtonPreloader /> : "Submit"}
-              </button>
-            </div>
-          </Form>
+                <div className="flex justify-center items-center gap-12 mt-8">
+                  <Link
+                    to={"/test_management"}
+                    className="bg-red-600 px-4 py-2 text-white rounded-md hover:bg-red-700 cursor-pointer"
+                  >
+                    Cancel
+                  </Link>
+                  <button
+                    className={` px-4 py-2 text-white rounded-sm hover:bg-green-900 ${
+                      formik.isValid
+                        ? "bg-green-600"
+                        : "bg-gray-500 hover:bg-gray-700 cursor-not-allowed"
+                    }`}
+                    type="submit"
+                    disabled={!formik.isValid}
+                  >
+                    {loading ? <ButtonPreloader /> : "Submit"}
+                  </button>
+                </div>
+              </Form>
+            );
+          }}
         </Formik>
       </div>
     </div>

@@ -1,33 +1,25 @@
-import React, { useEffect, useState } from "react";
-import { useLocation, Link, useNavigate } from "react-router-dom";
+import React, { useEffect, useState, useRef } from "react";
+import { useLocation, Link, useNavigate, Navigate } from "react-router-dom";
 import DefaultLayout from "../../components/DefaultLayout";
 import ManagementTable from "../../components/ManagementTable";
-import clipBoard from "../../assets/paste-clipboard.png";
-import folder from "../../assets/Vector (7).png";
-import page from "../../assets/page.png";
-import axios from "../../sevices/axios";
 import AddTestCaseTable from "./AddTestCaseTable";
 import AddTestCase from "./AddTestCase";
 import RenameFolder from "../../components/folders/RenameFolder";
 import DeleteFolder from "../../components/folders/DeleteFolder";
-import TableFunctions from "../../components/table/TableFunctions";
-import { toast } from "react-toastify";
 import EditTestCase from "./EditTestCase";
-import ButtonPreloader from "../../components/ButtonPreloader";
 import DeleteTestCase from "./DeleteTestCase";
 import DeleteTestCaseTable from "./DeleteTestCaseTable";
 import EditTestCaseTable from "./EditTestCaseTable";
 
 function TestManagement() {
   const navigate = useNavigate();
-  const [loading, setLoading] = useState(false);
   const [openAddCaseModal, setopenAddCaseModal] = useState(false);
   const [openAddTestCaseModal, setopenAddTestCaseModal] = useState(false);
   const [OpenEditModal, setsetOpenEditModal] = useState(false);
   const [OpenDeleteModal, setOpenDeleteModal] = useState(false);
   const [testCaseTable, setTestCaseTable] = useState([]);
 
-  // Getting Query From URL
+  // Getting Query From URL=================
   let search = useLocation().search;
   const folderId = new URLSearchParams(search).get("folder");
   const tableId = new URLSearchParams(search).get("table");
@@ -36,7 +28,26 @@ function TestManagement() {
   const deletefolder = new URLSearchParams(search).get("deletefolder");
   const edittable = new URLSearchParams(search).get("edit_table");
   const deletetable = new URLSearchParams(search).get("deletetable");
-  const deleteCase = new URLSearchParams(search).get("deleteCase");
+  let EditCaseRef = useRef();
+  function editCaseModal() {
+    let closeEditCaseModal = (e) => {
+      if (EditCaseRef.current != null) {
+        if (!EditCaseRef.current.contains(e.target)) {
+          // navigate(`/test_management?folder=${folderId}&table=${tableId}`, {
+          //   replace: true,
+          // });
+          return setsetOpenEditModal(false);
+        }
+      }
+    };
+    document.addEventListener("mousedown", closeEditCaseModal);
+    return () => {
+      document.removeEventListener("mousedown", closeEditCaseModal);
+    };
+  }
+  useEffect(() => {
+    editCaseModal();
+  }, []);
 
   return (
     <>
@@ -58,7 +69,7 @@ function TestManagement() {
               />
             </>
           ) : (
-            <div className="border border-blue-600 rounded-xl w-full p-44">
+            <div className="border border-blue-600 rounded-xl w-full p-44 mt-2">
               <p className="text-center text-gray-400 font-semibold">
                 Select a folder to get more details
               </p>
@@ -73,6 +84,7 @@ function TestManagement() {
       />
       {/* =========Add Test Case Table=========== */}
       <AddTestCaseTable
+        // testTableRef={tableRef}
         setopenAddTestCaseModal={() => setopenAddTestCaseModal(false)}
         styles={openAddTestCaseModal ? "flex" : "hidden"}
       />
@@ -90,6 +102,7 @@ function TestManagement() {
         <DeleteTestCaseTable styles={deletetable ? "flex" : "hidden"} />
       )}
       <EditTestCase
+        EditCaseRef={EditCaseRef}
         styles={OpenEditModal ? "flex" : "hidden"}
         setsetOpenEditModal={() => {
           setsetOpenEditModal(false);

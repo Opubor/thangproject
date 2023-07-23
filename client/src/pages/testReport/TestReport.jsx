@@ -1,11 +1,18 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import DefaultLayout from "../../components/DefaultLayout";
+import chartbg from "../../assets/chartbg.png";
 
 function TestReport() {
   return (
     <DefaultLayout>
-      <div className="h-screen bg-modalbackground flex justify-center items-center">
+      <div
+        className={`h-[39rem] flex justify-center items-center`}
+        style={{
+          backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.500), rgba(0, 0, 0, 0.500)),url(${chartbg})`,
+          backgroundSize: "cover",
+        }}
+      >
         <div className="bg-white p-6 text-center">
           <h1 className="text-2xl font-bold">
             This feature is coming on next version! 🚧

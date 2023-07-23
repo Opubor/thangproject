@@ -11,8 +11,8 @@ const { forgotPasswordValidator, resetPasswordValidator} = require('../validator
 router.post('/forgotpassword', async function(req,res,next){
     try {
        const {email} = req.body
-    //    const {error} = forgotPasswordValidator.validate({email})
-    //    if (error) throw new createHttpError.BadRequest(error.details[0].message);
+       const {error} = forgotPasswordValidator.validate({email})
+       if (error) throw new createHttpError.BadRequest(error.details[0].message);
        const oldUser = await Staffs.find({email})
        if(!oldUser){
            return res.send("User does not exist")

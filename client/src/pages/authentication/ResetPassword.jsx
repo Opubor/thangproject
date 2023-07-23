@@ -1,12 +1,12 @@
 import React, { useState } from "react";
-import { Formik, Field, Form, ErrorMessage, useFormik } from "formik";
+import { Formik, Field, Form, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import ButtonPreloader from "../../components/ButtonPreloader";
 import axios from "../../../src/sevices/axios";
 import { toast } from "react-toastify";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useEffect } from "react";
-import logo from "../../assets//Group 26942.png";
+import logo from "../../assets/fptlogo.png";
 
 function ResetPassword() {
   const navigate = useNavigate();
@@ -54,7 +54,7 @@ function ResetPassword() {
   return (
     <div className=" h-screen bg-white">
       <div className="px-36 py-4 font-bold text-xl flex items-center">
-        <img className="w-8" src={logo} />
+        <img className="w-16" src={logo} />
         <h1>Test management</h1>
       </div>
       <div className="flex justify-between items-center px-56">
@@ -75,6 +75,8 @@ function ResetPassword() {
               newPassword: "",
               comfirmPassword: "",
             }}
+            validateOnChange={false}
+            validateOnBlur={false}
             validationSchema={Yup.object().shape({
               newPassword: Yup.string().required("Required field"),
               comfirmPassword: Yup.string()

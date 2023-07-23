@@ -13,6 +13,7 @@ import ReactPagination from "../../components/ReactPaginate";
 import TotalNo from "../../components/TotalNo";
 import SearchInput from "../../components/SearchInput";
 import AddTestEnvironment from "./AddTestEnvironment";
+import { AiTwotoneDelete } from "react-icons/ai";
 
 function TestEnvironment() {
   const [loading, setLoading] = useState(false);
@@ -88,16 +89,19 @@ function TestEnvironment() {
                 Test Environment
               </h1>
               <button
-                className="flex justify-between items-center gap-2 text-sm border-2 border-lightblue rounded-lg px-4 py-2 text-lightblue font-semibold hover:bg-lightblue hover:text-white text-sm lg:text-base"
+                className="flex justify-between items-center gap-2 text-sm border-2 border-lightblue rounded-lg px-4 py-1 text-lightblue font-semibold hover:bg-lightblue hover:text-white"
                 onClick={() => setOpenAddEnv(true)}
               >
                 Add Precondition
                 <img src={plusBlue} />
               </button>
             </div>
-            <div className="flex flex-col md:flex-row justify-between items-center">
-              <div className="w-full lg:w-7/12 pr-8">
-                <SearchInput onSearch={search} />
+            <div className="flex flex-col md:flex-row justify-between items-center gap-4 md:gap-0">
+              <div className="w-full lg:w-7/12 md:pr-8">
+                <SearchInput
+                  onSearch={search}
+                  placeholder="Search by Operating System"
+                />
               </div>
               <div className="w-full lg:w-5/12 flex justify-start lg:justify-end items-center gap-4">
                 <ReactPagination
@@ -116,7 +120,7 @@ function TestEnvironment() {
               return (
                 <div
                   className="border border-gray-200 rounded-3xl py-4 text-sm mt-2"
-                  key={i}
+                  key={data?._id}
                 >
                   <div className="flex justify-between items-center pl-8 xl:pl-12 pr-4 mb-6">
                     <div className="flex justify-between items-center gap-4">
@@ -135,7 +139,9 @@ function TestEnvironment() {
                           setDeleteTestEnv(data?.operatingsystem);
                       }}
                     >
-                      <img src={deletecircle} className="w-4" />
+                      {React.createElement(AiTwotoneDelete, {
+                        size: "20",
+                      })}
                     </button>
                   </div>
 
@@ -154,7 +160,7 @@ function TestEnvironment() {
                 </div>
               );
             })}
-            {/* ================================================= */}
+            {/* ================================ */}
           </div>
 
           {/* ===========AddTestEnvironmentVariable========= */}

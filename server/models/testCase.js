@@ -2,6 +2,7 @@ const {Schema, default:mongoose} = require('mongoose')
 
 const TestCaseSchema = new Schema({
     testcasetable: String,
+    caseid: String,
     assignedfolderId: String,
     priority: String,
     title: String,

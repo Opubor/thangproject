@@ -96,56 +96,78 @@ const {getStorage, ref, getDownloadURL, uploadBytesResumable}  = require('fireba
 
 // FIRE-BASE : FIRE-BASE : FIRE-BASE : FIRE-BASE
 const firebaseConfig = {
-    apiKey: "AIzaSyAL6tFDnBhbOO7_ejvsOI1qlMR-fvl6g8o",
-    authDomain: "kalinga-23865.firebaseapp.com",
-    projectId: "kalinga-23865",
-    storageBucket: "kalinga-23865.appspot.com",
-    messagingSenderId: "922179444759",
-    appId: "1:922179444759:web:927b7b995c45e37d263c52",
-    measurementId: "G-GHJ3QSVJD8"
+    apiKey: "AIzaSyAGXnNtimtVDa4b2yCMOe7WzYVZQ1zrLEU",
+    authDomain: "thang-mgt.firebaseapp.com",
+    projectId: "thang-mgt",
+    storageBucket: "thang-mgt.appspot.com",
+    messagingSenderId: "941055703089",
+    appId: "1:941055703089:web:38e659f79027eec381fd10"
   };
 initializeApp(firebaseConfig);
 const storage = getStorage();
 const upload = multer({storage: multer.memoryStorage()});
 
 // CREATE_TESTCASE-TABLE : CREATE_TESTCASE-TABLE : CREATE_TESTCASE-TABLE : CREATE_TESTCASE-TABLE
-router.post('/testcasetable', async function(req,res,next){
-    try {
-       const {tablename,description,attachments,date,precondition,version,assignedfolderId} = req.body
-    //    error checking
-       const {error} = testCaseTableValidator.validate({tablename,description,attachments,date,precondition,version,assignedfolderId})
-       if (error) throw new createHttpError.BadRequest(error.details[0].message);
-    //    ==============
-        let table = await TestCaseTable.create({tablename,description,attachments,date,precondition,version,assignedfolderId});
-        let assignedfolder = []
-        if (assignedfolderId.match(/^[0-9a-fA-F]{24}$/)) {
-            assignedfolder = await Folders.findOne({_id: assignedfolderId})
-        } 
-        if(assignedfolder){
-            assignedfolder.testtables.push(table)
-            assignedfolder.save()
-            return res.status(200).send('Test case Table created successfully')
-        }else{
-            return res.send('error')
-        }   
-    } catch (error) {
-       return res.status(401).send(error.message)
-    }
-})
+// router.post('/testcasetable', async function(req,res,next){
+//     try {
+//        const {tablename,description,attachments,date,precondition,version,assignedfolderId} = req.body
+//     //    error checking
+//        const {error} = testCaseTableValidator.validate({tablename,description,attachments,date,precondition,version,assignedfolderId})
+//        if (error) throw new createHttpError.BadRequest(error.details[0].message);
+//     //    ==============
+//         let table = await TestCaseTable.create({tablename,description,attachments,date,precondition,version,assignedfolderId});
+//         let assignedfolder = []
+//         if (assignedfolderId.match(/^[0-9a-fA-F]{24}$/)) {
+//             assignedfolder = await Folders.findOne({_id: assignedfolderId})
+//         } 
+//         if(assignedfolder){
+//             assignedfolder.testtables.push(table)
+//             assignedfolder.save()
+//             return res.status(200).send('Test case Table created successfully')
+//         }else{
+//             return res.send('error')
+//         }   
+//     } catch (error) {
+//        return res.status(401).send(error.message)
+//     }
+// })
 // TESCASETABLE CSV
-router.put('/testcasetablecsv/:id',upload.single('testcasetablecsv'), async function(req, res, next) {
+router.post('/testcasetable',upload.single('testcasetablecsv'), async function(req, res, next) {
     try {
-        const id = req.params.id
-        let x = req.file
-        if(x){
-            const storageRef = ref(storage, `files/${req.file.originalname + " " + id}`)
+        const {tablename,description,attachments,date,precondition,version,assignedfolderId} = req.query
+        let fileInput = req.file
+        if(fileInput){
+            const storageRef = ref(storage, `files/${req.file.originalname + " " + tablename}`)
             const metadata = {
                 contentType: req.file.mimetype
             }
             const snapshot = await uploadBytesResumable(storageRef, req.file.buffer, metadata);
-            const testcasetablecsv = await getDownloadURL(snapshot.ref)
-            await TestCaseTable.findByIdAndUpdate(id,{testcasetablecsv})
-            return res.status(200).send('Profile picture updated')
+            const attachments = await getDownloadURL(snapshot.ref)
+            let table = await TestCaseTable.create({tablename,description,attachments,date,precondition,version,assignedfolderId})
+            let assignedfolder = []
+            if (assignedfolderId.match(/^[0-9a-fA-F]{24}$/)) {
+                assignedfolder = await Folders.findOne({_id: assignedfolderId})
+            } 
+            if(assignedfolder){
+                assignedfolder.testtables.push(table)
+                assignedfolder.save()
+                return res.status(200).send('Test case Table created successfully')
+            }else{
+                return res.send('error')
+            }   
+        }else{
+            let table = await TestCaseTable.create({tablename,description,date,precondition,version,assignedfolderId})
+            let assignedfolder = []
+            if (assignedfolderId.match(/^[0-9a-fA-F]{24}$/)) {
+                assignedfolder = await Folders.findOne({_id: assignedfolderId})
+            } 
+            if(assignedfolder){
+                assignedfolder.testtables.push(table)
+                assignedfolder.save()
+                return res.status(200).send('Test case Table created successfully')
+            }else{
+                return res.send('error')
+            }   
         }
     } catch (error) {
         return res.status(401).send(error.message)
@@ -267,8 +289,6 @@ router.put('/testcasetable/:id', async function(req, res, next) {
     try {
         const{ tablename,description,attachments,date,precondition,version,assignedfolderId } = req.body
         const id = req.params.id
-        // const {error} = testCaseTableValidator.validate({tablename,description,attachments,date,precondition,version,assignedfolderId})
-        // if (error) throw new createHttpError.BadRequest(error.details[0].message);
         await TestCaseTable.findByIdAndUpdate(id,{tablename,description,attachments,date,precondition,version,assignedfolderId})
         return res.status(200).send('Updated Successfully')
     } catch (error) {

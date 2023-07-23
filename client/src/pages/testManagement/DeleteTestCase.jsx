@@ -1,17 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useLocation, Link, useNavigate } from "react-router-dom";
-import DefaultLayout from "../../components/DefaultLayout";
-import clipBoard from "../../assets/paste-clipboard.png";
-import folder from "../../assets/Vector (7).png";
-import page from "../../assets/page.png";
 import axios from "../../sevices/axios";
-import AddTestCaseTable from "./AddTestCaseTable";
-import AddTestCase from "./AddTestCase";
-import RenameFolder from "../../components/folders/RenameFolder";
-import DeleteFolder from "../../components/folders/DeleteFolder";
-import TableFunctions from "../../components/table/TableFunctions";
 import { toast } from "react-toastify";
-import EditTestCase from "./EditTestCase";
 import ButtonPreloader from "../../components/ButtonPreloader";
 
 function DeleteTestCase({ styles, setOpenDeleteModal }) {
@@ -65,7 +55,7 @@ function DeleteTestCase({ styles, setOpenDeleteModal }) {
               <span>Cancel</span>
             </Link>
             <button className="bg-green-600 px-4 py-2 text-white rounded-md hover:bg-green-900">
-              {loading ? <ButtonPreloader /> : "Submit"}
+              {loading ? <ButtonPreloader /> : "Delete"}
             </button>
           </div>
         </form>

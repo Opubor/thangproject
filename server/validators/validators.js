@@ -28,7 +28,7 @@ const testCaseValidator = Joi.object({
     testcasetable: Joi.string().max(200).required().messages({'string.empty': 'Select a table'}),
     assignedfolderId: Joi.string().max(200).required().messages({'string.empty': 'Select a Folder'}),
     priority: Joi.string().max(200).required().messages({'string.empty': 'Select a priority'}),
-    title: Joi.string().max(200).required().messages({'string.empty': 'Title is required'}),
+    title: Joi.string().max(1000).required().messages({'string.empty': 'Title is required'}),
     teststep: Joi.string().max(200).required().messages({'string.empty': 'Test step is required'}),
     precondition: Joi.string().max(200).required().messages({'string.empty': 'Select a precondition'}),
     expectations: Joi.string().max(200).required().messages({'string.empty': 'Expectations is required'}),
@@ -51,7 +51,7 @@ const testCaseTableValidator = Joi.object({
 
 const testEnvironmentValidator = Joi.object({
     operatingsystem: Joi.string().max(200).required().messages({'string.empty': 'Table name is required'}),
-    description: Joi.string().max(200).required().messages({'string.empty': 'Description is required'}),
+    description: Joi.string().max(200).min(0).messages({'string.empty': 'Description is required'}),
     browser: Joi.string().max(200).required().messages({'string.empty': 'Browser is required'}),
 });
 

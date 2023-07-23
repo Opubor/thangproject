@@ -126,7 +126,6 @@ router.post('/folder', async function(req,res,next){
  * 
  */
 
-
 // READ_FOLDERS : READ_FOLDERS : READ_FOLDERS : READ_FOLDERS
 router.get('/folders', async function(req,res,next){
     try {
@@ -157,7 +156,6 @@ router.get('/folders', async function(req,res,next){
         return res.status(401).send(error.message)
     }
 })
-
 
 /**
  * @swagger

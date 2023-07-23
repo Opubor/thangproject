@@ -5,7 +5,7 @@ import ButtonPreloader from "../../components/ButtonPreloader";
 import axios from "../../../src/sevices/axios";
 import { toast } from "react-toastify";
 import { Link, useNavigate } from "react-router-dom";
-import logo from "../../assets//Group 26942.png";
+import logo from "../../assets/fptlogo.png";
 
 function ForgotPassword() {
   const navigate = useNavigate();
@@ -31,7 +31,7 @@ function ForgotPassword() {
   return (
     <div className=" h-screen bg-white">
       <div className="px-36 py-4 font-bold text-xl flex items-center">
-        <img className="w-8" src={logo} />
+        <img className="w-16" src={logo} />
         <h1>Test management</h1>
       </div>
       <div className="flex justify-between items-center px-56">
@@ -50,6 +50,8 @@ function ForgotPassword() {
             initialValues={{
               email: "",
             }}
+            validateOnChange={false}
+            validateOnBlur={false}
             validationSchema={Yup.object().shape({
               email: Yup.string().required("Required field"),
             })}

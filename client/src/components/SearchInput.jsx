@@ -1,7 +1,6 @@
 import React, { useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
 
-function SearchInput({ onSearch }) {
+function SearchInput({ onSearch, placeholder }) {
   const search = useRef();
   if (search === "") {
     window.location.reload(true);
@@ -21,8 +20,8 @@ function SearchInput({ onSearch }) {
             ref={search}
             type="text"
             id="simple-search"
-            className="px-4 py-2 rounded-md border border-gray-300 w-full focus:outline-none"
-            placeholder="Search"
+            className="px-4 py-2 rounded-md border border-gray-300 w-full focus:outline-none text-sm"
+            placeholder={placeholder}
           />
         </div>
         <button

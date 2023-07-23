@@ -128,16 +128,32 @@ router.post('/testcase', async function(req,res,next){
        const {testcasetable,assignedfolderId ,priority, title, teststep,precondition, description, category, status, results, expectations, assignedstaff} = req.body
        const {error} = testCaseValidator.validate({testcasetable,assignedfolderId ,priority, title, teststep,precondition, description, category, status, results, expectations, assignedstaff})
        if (error) throw new createHttpError.BadRequest(error.details[0].message);
-        let testcase = await TestCase.create({testcasetable,assignedfolderId ,priority, title, teststep,precondition, description, category, status, results, expectations, assignedstaff});
-        let staff = await Staffs.findOne({_id : assignedstaff})
+       let latestCase = await TestCase.find({testcasetable:testcasetable}, {caseid: 1,_id: 0}).sort({_id : 'descending'}).limit(1)        
+       let assignedtable = []
+        if (testcasetable.match(/^[0-9a-fA-F]{24}$/)) {
+        assignedtable = await TestCaseTable.findOne({_id: testcasetable})
+        } 
+        let tablename = assignedtable.tablename
+
+        let caseid = ""
+       if(latestCase.length > 0){
+        latestCase.map((data, i) =>{
+            return(
+                data.caseid ? caseid = `${tablename}-${Number(data.caseid.split('-').pop()) + 1}` : caseid = `${tablename}-${1}`
+            )
+        })
+       }else{
+         caseid = `${tablename}-${1}`
+       }
+        let testcase = await TestCase.create({caseid,testcasetable,assignedfolderId ,priority, title, teststep,precondition, description, category, status, results, expectations, assignedstaff});
+        let staff = []
+        if (assignedstaff.match(/^[0-9a-fA-F]{24}$/)) {
+            staff =  await Staffs.findOne({_id : assignedstaff})
+        } 
         testcase.staff = staff
         testcase.assignedstaffname = staff.name
         testcase.save()
-        let assignedtable = []
         let assignedfolder = []
-        if (testcasetable.match(/^[0-9a-fA-F]{24}$/)) {
-            assignedtable = await TestCaseTable.findOne({_id: testcasetable})
-        } 
         if (assignedfolderId.match(/^[0-9a-fA-F]{24}$/)) {
             assignedfolder = await Folders.findOne({_id: assignedfolderId})
         } 
@@ -148,7 +164,7 @@ router.post('/testcase', async function(req,res,next){
             assignedfolder.save()
             return res.status(200).send('Test case created successfully')
         }else{
-            return res.status(401).send("errror")
+            return res.status(401).send("error")
         }       
     } catch (error) {
        return res.status(401).send(error.message)
@@ -282,7 +298,6 @@ router.get('/alltestcase', async function(req,res,next){
     }
 })
 
-
 /**
  * @swagger
  * /testcase/{id}:
@@ -318,17 +333,24 @@ router.get('/alltestcase', async function(req,res,next){
 // UPDATE_TEST-CASE : UPDATE_TEST-CASE : UPDATE_TEST-CASE : UPDATE_TEST-CASE
 router.put('/testcase/:id', async function(req, res, next) {
     try {
-        const{ testcasetable,assignedfolderId ,priority, title, teststep,precondition, description, category, status, results, expectations, assignedstaff, testcaseid } = req.body
+        const{ testcasetable,assignedfolderId ,priority, title, teststep,precondition, description, category, status, results, expectations, assignedstaff } = req.body
         const id = req.params.id
-        const {error} = testCaseValidator.validate({testcasetable,assignedfolderId ,priority, title, teststep,precondition, description, category, status, results, expectations, assignedstaff})
-        if (error) throw new createHttpError.BadRequest(error.details[0].message);
-        let testcase =  await TestCase.findByIdAndUpdate(id,{priority, title, teststep,precondition, description, category, status, results, expectations, assignedstaff, testcaseid})
-        let staff = await Staffs.findOne({_id : assignedstaff})
-        testcase.staff = staff
-        testcase.assignedstaffname = staff.name
-        testcase.save()
+        // const {error} = testCaseValidator.validate({testcasetable,assignedfolderId ,priority, title, teststep,precondition, description, category, status, results, expectations, assignedstaff})
+        // if (error) throw new createHttpError.BadRequest(error.details[0].message);
+        let testcase =  await TestCase.findByIdAndUpdate(id,{priority, title, teststep,precondition, description, category, status, results, expectations, assignedstaff})
+        let staff = []
+        if(assignedstaff){
+            if (assignedstaff.match(/^[0-9a-fA-F]{24}$/)) {
+                staff =  await Staffs.findOne({_id : assignedstaff})
+                testcase.staff = staff
+                testcase.assignedstaffname = staff.name
+                testcase.save()
+            } 
+        }
+        
         return res.status(200).send('Updated Successfully')
     } catch (error) {
+        console.log(error.message)
         return res.status(401).send(error.message)
     }
 });
@@ -376,28 +398,32 @@ const storage = multer.diskStorage({
 const upload = multer({
     storage
 })
-// router.post('/importTestCase', upload.single('importFile'), async function(req,res,next){
-//     try {
-        // let xlFile = XLSX.readFile(req.file.path)
-        // let sheet = xlFile.Sheets[xlFile.SheetNames[0]]
-        // let P_JSON = XLSX.utils.sheet_to_json(sheet)
-        // let importedFile = await TestCase.insertMany(P_JSON)
-        // console.log(importedFile)
-        // const jsonArray = await csv().fromFile(req.file.path);
-        // let title = ""
-        // jsonArray.map((data, i) => {
-        //     return(
-        //         title = data.title
-        //     )
-        // })
-        // var parsedData = JSON.parse(jsonArray)
-        // let importedFile = await TestCase.insertMany(jsonArray)
-        // return res.send(parsedData)
-        // return res.status(200).send('Test case created successfully')
-//     } catch (error) {
-//         return res.status(401).send(error.message)
-//     }
-// })
-
+router.post('/importTestCase', upload.single('importFile'), async function(req,res,next){
+    try {
+        const {testcasetable, assignedfolderId} = req.query
+        const jsonArray = await csv().fromFile(req.file.path);
+        let testcase = jsonArray.map((item) => {
+            return {
+                caseid: item["Test Case"],
+                priority: item.Priority,
+                title: item.Title,
+                category: item.Category,
+                expectations: item.Expectations,
+                teststep: item["Test Step"],
+                precondition: item.Precondition,
+                status: item["Status Case"],
+                assignedstaffname: item["Assigned Staff"],
+                description: item.Description,
+                results: item.Results,
+                testcasetable: testcasetable,
+                assignedfolderId: assignedfolderId,
+            };
+         });
+         let importedFile = await TestCase.insertMany(testcase)
+         return res.send(importedFile)
+    } catch (error) {
+        return res.status(401).send(error.message)
+    }
+})
 
 module.exports = router

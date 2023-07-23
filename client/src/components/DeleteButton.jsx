@@ -4,7 +4,6 @@ import { confirmAlert } from "react-confirm-alert";
 import "react-confirm-alert/src/react-confirm-alert.css";
 import axios from "../sevices/axios";
 import ButtonPreloader from "./ButtonPreloader";
-import deletecircle from "../assets/delete-circle.png";
 
 function DeleteButton({ path, id, record, children }) {
   const [loading, setLoading] = useState(false);

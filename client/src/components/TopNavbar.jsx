@@ -1,11 +1,11 @@
-import React, { useContext } from "react";
+import React, { useContext, useRef } from "react";
 import baseStep from "../assets/BaseStep.png";
 import avatar from "../assets/avatar.png";
-import testreporticon from "../assets/Vector (15).png";
+import testreporticon from "../assets/fptlogo.png";
 import { loginContext } from "../context/auth";
 import { FaBars } from "react-icons/fa";
 
-function TopNavbar({ openSidebar, openAvatar }) {
+function TopNavbar({ openSidebar, openAvatar, userDropDownRef }) {
   const { logout, loggedIn, user } = useContext(loginContext);
 
   return (
@@ -16,8 +16,8 @@ function TopNavbar({ openSidebar, openAvatar }) {
             size: "20",
           })}
         </button>
-        <div className="font-bold text-lg flex items-center gap-2 pl-8">
-          <img src={testreporticon} /> Test Management
+        <div className="font-bold text-lg flex items-center gap pl-8">
+          <img src={testreporticon} className="w-16" /> Smart Test Management
         </div>
       </div>
       <img

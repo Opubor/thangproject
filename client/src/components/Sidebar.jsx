@@ -5,7 +5,7 @@ import plus from "../assets/add-circle.png";
 function Sidebar({ styles, setOpenAddFolderModal, setOpenRenameFolderModal }) {
   return (
     <div
-      className={`xl:flex xl:w-2/12 mt-4 fixed left-0 flex-col pl-8 ${styles}`}
+      className={`xl:flex xl:w-72 mt-16 xl:mt-0 fixed left-0 flex-col p-8 ${styles}`}
     >
       <h1 className="font-bold text-lg text-textgray">Test Repository</h1>
       <h1

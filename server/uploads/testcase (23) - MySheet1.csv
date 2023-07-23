@@ -1,0 +1,12 @@
+,,,,,,,,,,Priority,Title,Test Step,Precondition,Category,Status Case,Expectations,Assigned Staff,Description,Results
+,,,,,,,,,,Low,Music,"Play guitar
+Play drum",Windows,Instrument,Block,Quality music,Opubor Tony,,
+,,,,,,,,,,Medium,Colors,"Sort colors
+Pick colors",Windows,Bright,Block, Very bright colors,,,
+,,,,,,,,,,Medium,Calls,"Collect numbers
+Call subscribers
+Get feedback
+Act on feedback",Windows,Subscribers,Pending,For feedbacks to be positive,,,
+,,,,,,,,,,High,Welding,"Get steel
+Cut in halves
+Weld them together",Windows,Practicals,Pass,High durability,,Welded metal was used in making flowers,It worked perfectly well

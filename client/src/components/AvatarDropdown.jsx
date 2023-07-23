@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useRef } from "react";
 import profilePic from "../assets/Vector (20).png";
 import faq from "../assets/Vector (19).png";
 import logoutIcon from "../assets/Vector (18).png";
@@ -7,7 +7,7 @@ import avatar from "../assets/avatar.png";
 import { loginContext } from "../context/auth";
 import { Link, Navigate } from "react-router-dom";
 
-function AvatarDropdown({ styles }) {
+function AvatarDropdown({ styles, userDropDownRef }) {
   const { logout, loggedIn, user } = useContext(loginContext);
   if (!loggedIn) {
     return <Navigate to={"/"} />;
@@ -15,6 +15,7 @@ function AvatarDropdown({ styles }) {
   return (
     <div
       className={`bg-white shadow shadow-lg w-64 fixed right-12 z-50 top-8 py-4 rounded-xl border ${styles}`}
+      ref={userDropDownRef}
     >
       <div className="flex items-center gap-4 border-b-2 pb-4 px-6">
         <img
