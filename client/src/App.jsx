@@ -30,6 +30,9 @@ const EditTestEnvironment = React.lazy(() =>
   import("./pages/testEnvironment/EditTestEnvironment")
 );
 const DefaultLayout = React.lazy(() => import("./components/DefaultLayout"));
+const RoleUpdateAuth = React.lazy(() =>
+  import("./pages/authentication/RoleUpdateAuth")
+);
 
 function App() {
   return (
@@ -50,7 +53,7 @@ function App() {
             <Route path="/test_management" element={<TestManagement />} />
             <Route path="/test_report" element={<TestReport />} />
             <Route path="/defaultLayout" element={<DefaultLayout />} />
-
+            <Route path="/role_auth_one" element={<RoleUpdateAuth />} />
             {/* =================EDIT================= */}
             <Route
               path="/edit_test_environment"

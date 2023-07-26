@@ -363,7 +363,7 @@ const ManagementTable = ({
                           </Link>
                         </div>
                       </td>
-                      <td className="flex justify-between items-center m-2">
+                      <td className="flex justify-center items-center mt-4">
                         <Link
                           to={`/test_management?caseId=${data._id}&id=${data?.caseid}&folder=${folderId}&table=${tableId}`}
                           className="w-full"

@@ -11,6 +11,7 @@ import { toast } from "react-toastify";
 import ButtonPreloader from "../../components/ButtonPreloader";
 import ReactPagination from "../../components/ReactPaginate";
 import TotalNo from "../../components/TotalNo";
+import { Link } from "react-router-dom";
 
 function Settings() {
   const { logout, loggedIn, user } = useContext(loginContext);
@@ -392,11 +393,15 @@ function Settings() {
                     );
                   }}
                 </Formik>
+
+                {/* <Link className="px-8 py-2 bg-blue-900 text-white font-semibold rounded-sm">
+                  Become an Admin
+                </Link> */}
               </div>
             }
             // ==================================
 
-            // Role=============================
+            // Admin_Role=============================
             tab3Tag={role === "admin" && "Manage Staffs"}
             tab3Display={
               role === "admin" && (

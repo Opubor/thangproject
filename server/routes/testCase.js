@@ -56,7 +56,7 @@ const csv = require("csvtojson");
  *                  description: Category of test case
  *              status: 
  *                  type: string
- *                  description: Status of test case which can be either Pass False Cancel Block or Blank
+ *                  description: Status of test case which can be either Pass Fail Cancel Block or Blank
  *              expectations: 
  *                  type: string
  *                  description: What is expected after test case has been carried out
@@ -404,17 +404,17 @@ router.post('/importTestCase', upload.single('importFile'), async function(req,r
         const jsonArray = await csv().fromFile(req.file.path);
         let testcase = jsonArray.map((item) => {
             return {
-                caseid: item["Test Case"],
+                caseid: item.ID,
                 priority: item.Priority,
                 title: item.Title,
                 category: item.Category,
-                expectations: item.Expectations,
-                teststep: item["Test Step"],
+                expectations: item.Expectation,
+                teststep: item["Test Steps"],
                 precondition: item.Precondition,
-                status: item["Status Case"],
-                assignedstaffname: item["Assigned Staff"],
+                status: item["Status case"] ? item["Status case"]  : "Blank",
+                assignedstaffname: item["Assigned"],
                 description: item.Description,
-                results: item.Results,
+                results: item.Result,
                 testcasetable: testcasetable,
                 assignedfolderId: assignedfolderId,
             };

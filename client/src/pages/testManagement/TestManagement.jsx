@@ -33,9 +33,6 @@ function TestManagement() {
     let closeEditCaseModal = (e) => {
       if (EditCaseRef.current != null) {
         if (!EditCaseRef.current.contains(e.target)) {
-          // navigate(`/test_management?folder=${folderId}&table=${tableId}`, {
-          //   replace: true,
-          // });
           return setsetOpenEditModal(false);
         }
       }
@@ -84,7 +81,6 @@ function TestManagement() {
       />
       {/* =========Add Test Case Table=========== */}
       <AddTestCaseTable
-        // testTableRef={tableRef}
         setopenAddTestCaseModal={() => setopenAddTestCaseModal(false)}
         styles={openAddTestCaseModal ? "flex" : "hidden"}
       />

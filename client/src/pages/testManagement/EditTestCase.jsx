@@ -72,7 +72,7 @@ function EditTestCase({ styles, setsetOpenEditModal, EditCaseRef }) {
 
   return (
     <div
-      className={`bg-black bg-opacity-70 absolute z-50 left-0 right-0 top-0 flex justify-end items-center h-screen ${styles}`}
+      className={`bg-black bg-opacity-70 absolute z-50 left-0 right-0 top-0 flex justify-end items-center ${styles}`}
     >
       <div
         className="px-6 py-8 w-full md:w-8/12 lg:w-6/12 xl:w-4/12 bg-white"
@@ -209,7 +209,10 @@ function EditTestCase({ styles, setsetOpenEditModal, EditCaseRef }) {
                       </option>
                       {testEnvironmentData.map((data, i) => {
                         return (
-                          <option value={data?.operatingsystem} key={i}>
+                          <option
+                            value={`${data?.operatingsystem} - ${data?.browser}`}
+                            key={i}
+                          >
                             {data?.operatingsystem} {" - "} {data?.browser}
                           </option>
                         );
@@ -284,7 +287,7 @@ function EditTestCase({ styles, setsetOpenEditModal, EditCaseRef }) {
                         {testcase?.status}
                       </span>
                     )}
-                    {testcase?.status === "False" && (
+                    {testcase?.status === "Fail" && (
                       <span
                         className="w-24 text-center rounded-full text-white px-4 py-1"
                         style={{ backgroundColor: "#FF4C51" }}

@@ -214,7 +214,7 @@ function TestExecution() {
                             ? "#EB7A12"
                             : data.status === "Blank"
                             ? "#DADADA"
-                            : data.status === "False"
+                            : data.status === "Fail"
                             ? "#FF4C51"
                             : data.status === "Cancel"
                             ? "#3A3541"
@@ -264,28 +264,28 @@ function TestExecution() {
                     </div>
                     <div>
                       <div className="flex items-center justify-between">
-                        {/* ===False=== */}
+                        {/* ===Fail=== */}
                         <div className="flex justify-center items-center gap-2">
                           <div className="bg-false rounded-full w-4 h-4"></div>
                           <h1 className="text-false font-semibold">
                             {
                               testCases.filter((element) => {
-                                return element.status === "False";
+                                return element.status === "Fail";
                               }).length
                             }{" "}
-                            False
+                            Fail
                           </h1>
                         </div>
                         <div className="text-false text-sm">
                           (
                           {Math.round(
                             (testCases.filter((element) => {
-                              return element.status === "False";
+                              return element.status === "Fail";
                             }).length /
                               testCases.length) *
                               100
                           )}
-                          {"% "} set to False)
+                          {"% "} set to Fail)
                         </div>
                       </div>
 
@@ -523,14 +523,28 @@ function TestExecution() {
                         {data.testcasetable === tableId && (
                           <>
                             <td className="flex justify-start items-center gap-2 py-4 px-2">
-                              <p className="font-semibold">
-                                {tableId && <>{data.caseid}</>}
-                              </p>
+                              <Link
+                                onClick={() => {
+                                  setup(true);
+                                }}
+                                to={`/test_execution?folder=${folderId}&table=${tableId}&case=${data._id}&id=${data.caseid}`}
+                              >
+                                <p className="font-semibold">
+                                  {tableId && <>{data.caseid}</>}
+                                </p>
+                              </Link>
                             </td>
                             <td>
-                              <p className="border-l-2 border-l-gray-400 border-r-2 border-r-gray-400 mx-2 px-2  truncate w-[18rem]">
-                                {data?.title}
-                              </p>
+                              <Link
+                                onClick={() => {
+                                  setup(true);
+                                }}
+                                to={`/test_execution?folder=${folderId}&table=${tableId}&case=${data._id}&id=${data.caseid}`}
+                              >
+                                <p className="border-l-2 border-l-gray-400 border-r-2 border-r-gray-400 mx-2 px-2  truncate w-[18rem]">
+                                  {data?.title}
+                                </p>
+                              </Link>
                             </td>
                             <td className="flex items-center font-semibold border-r-2 border-r-gray-400 m-2">
                               <Link
@@ -566,7 +580,7 @@ function TestExecution() {
                                     {data?.status}
                                   </span>
                                 )}
-                                {data?.status === "False" && (
+                                {data?.status === "Fail" && (
                                   <span
                                     className="w-24 text-center rounded-md text-white py-1"
                                     style={{ backgroundColor: "#FF4C51" }}
@@ -639,13 +653,7 @@ function TestExecution() {
                 >
                   {"<"}
                 </Link>
-                <h1 className="flex items-center gap-2">
-                  {currentCaseId}
-                  {/* <img
-                    src={editpenblack}
-                    className="border-b-2 border-b-gray-500"
-                  /> */}
-                </h1>
+                <h1 className="flex items-center gap-2">{currentCaseId}</h1>
               </div>
             </div>
 
@@ -778,11 +786,11 @@ function TestExecution() {
                         Blank
                       </option>
                       <option
-                        value="False"
+                        value="Fail"
                         className="px-8 text-white py rounded-full"
                         style={{ backgroundColor: "#FF4C51" }}
                       >
-                        False
+                        Fail
                       </option>
                       <option
                         value="Pass"

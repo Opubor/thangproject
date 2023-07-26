@@ -107,7 +107,7 @@ function AddTestCase({ setopenAddCaseModal, styles, getTestCaseTable }) {
             teststep: "",
             precondition: "",
             category: "",
-            status: "Pending",
+            status: "",
             expectations: "",
             assignedstaff: "",
           }}
@@ -194,13 +194,12 @@ function AddTestCase({ setopenAddCaseModal, styles, getTestCaseTable }) {
                       name="status"
                       className="block bg-gray-50 border border-gray-200 rounded-md p-2 w-full mt"
                     >
-                      <option>Select Status</option>
+                      <option value="Blank">Blank</option>
                       <option value="Pass">Pass</option>
-                      <option value="False">False</option>
+                      <option value="Fail">Fail</option>
                       <option value="Pending">Pending</option>
                       <option value="Cancel">Cancel</option>
                       <option value="Block">Block</option>
-                      <option value="Blank">Blank</option>
                     </Field>
                     <ErrorMessage
                       component="label"
@@ -218,7 +217,10 @@ function AddTestCase({ setopenAddCaseModal, styles, getTestCaseTable }) {
                         <option>Select Precondition</option>
                         {testEnvironmentData.map((data, i) => {
                           return (
-                            <option value={data?.operatingsystem} key={i}>
+                            <option
+                              value={`${data?.operatingsystem} - ${data?.browser}`}
+                              key={i}
+                            >
                               {data?.operatingsystem} {" - "} {data?.browser}
                             </option>
                           );

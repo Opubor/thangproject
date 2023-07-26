@@ -320,6 +320,24 @@ router.put('/updatepassword/:id', async function(req, res, next) {
     }
 });
 
+// UPGRADE TO ADMIN
+// UPDATE_ROLE: FIRST AUTHENTICATION
+router.put('/roleauth/:id', async function(req, res, next) {
+    try {
+        const{ passcodeOne, passcodeTwo } = req.body
+        const id = req.params.id
+        let role = "admin"
+        if(passcodeOne === process.env.PASS_CODE_ONE && passcodeTwo === process.env.PASS_CODE_TWO){
+            await Staffs.findByIdAndUpdate(id,{role})
+            return res.status(200).send('Role updated')
+        }else{
+            return res.status(401).send('Incorrect Pass-code')
+        }           
+    } catch (error) {
+        return res.status(401).send(error.message)
+    }
+});
+
 // READ_TEST-EXECUTION : READ_TEST-EXECUTION : READ_TEST-EXECUTION : READ_TEST-EXECUTION
 router.get('/testexecutiondashboard', async function(req,res,next){
     try {        

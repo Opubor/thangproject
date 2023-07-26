@@ -188,7 +188,7 @@ function Dashboard() {
                       ? "#EB7A12"
                       : data.status === "Blank"
                       ? "#DADADA"
-                      : data.status === "False"
+                      : data.status === "Fail"
                       ? "#FF4C51"
                       : data.status === "Cancel"
                       ? "#3A3541"
@@ -241,12 +241,12 @@ function Dashboard() {
                 key={data?._id}
               >
                 <p>{data?.tablename}</p>
-                <div className="pr-16">
+                <div className="pr-24">
                   {
                     testCases.filter((element) => {
                       return (
                         element.testcasetable === data._id &&
-                        element.status === "False"
+                        element.status === "Fail"
                       );
                     }).length
                   }
@@ -325,7 +325,7 @@ function Dashboard() {
                           ? "#EB7A12"
                           : data.status === "Blank"
                           ? "#DADADA"
-                          : data.status === "False"
+                          : data.status === "Fail"
                           ? "#FF4C51"
                           : data.status === "Cancel"
                           ? "#3A3541"

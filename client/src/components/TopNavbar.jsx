@@ -20,12 +20,17 @@ function TopNavbar({ openSidebar, openAvatar, userDropDownRef }) {
           <img src={testreporticon} className="w-16" /> Smart Test Management
         </div>
       </div>
-      <img
-        className="inline-block h-8 w-8 rounded-full ring-2 ring-white cursor-pointer"
-        src={user?.profilepic ? user?.profilepic : avatar}
-        alt=""
-        onClick={openAvatar}
-      />
+      <div className="flex gap-2 items-center">
+        <h1 className="font-semibold text-md">
+          {user?.role === "admin" && "ADMIN"}
+        </h1>
+        <img
+          className="inline-block h-8 w-8 rounded-full ring-2 ring-white cursor-pointer"
+          src={user?.profilepic ? user?.profilepic : avatar}
+          alt=""
+          onClick={openAvatar}
+        />
+      </div>
     </div>
   );
 }

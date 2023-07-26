@@ -82,17 +82,17 @@ function TableFunctions({
     "Results",
   ];
   const titleDisplay = {
-    caseid: "Test Case",
+    caseid: "ID",
     category: "Category",
     title: "Title",
     priority: "Priority",
     precondition: "Precondition",
-    teststep: "Test Step",
-    expectations: "Expectations",
-    status: "Status Case",
-    results: "Results",
+    teststep: "Test Steps",
+    expectations: "Expectation",
+    status: "Status case",
+    results: "Result",
     description: "Description",
-    assignedstaffname: "Assigned Staff",
+    assignedstaffname: "Assigned",
   };
 
   const newTitleData = [titleDisplay, ...sheetdata];

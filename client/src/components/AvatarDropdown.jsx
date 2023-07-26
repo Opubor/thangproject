@@ -25,7 +25,7 @@ function AvatarDropdown({ styles, userDropDownRef }) {
         />
         <div>
           <h1 className="font-bold text-md">{user?.name}</h1>
-          <h2 className="text-textgray">{user?.role}</h2>
+          <h2 className="text-textgray">{user?.uniqueid}</h2>
         </div>
       </div>
       <Link
@@ -44,7 +44,15 @@ function AvatarDropdown({ styles, userDropDownRef }) {
       </Link>
       <div className="flex items-center gap-4 py-2 border-b-2 px-6 cursor-pointer hover:bg-gray-100">
         <img src={faq} />
-        <h1 className="text-base">FAQ</h1>
+        {user?.role === "admin" ? (
+          <Link to={"/profile"} className="text-base">
+            Manage Staffs
+          </Link>
+        ) : (
+          <Link to={"/role_auth_one"} className="text-base">
+            Become an Admin
+          </Link>
+        )}
       </div>
       <button
         onClick={logout}

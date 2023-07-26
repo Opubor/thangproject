@@ -35,11 +35,12 @@ const SidebarComponents = ({ styles, setOpenRenameFolderModal }) => {
       });
   }
 
-  let RenameDeleteRef = useRef();
+  let RenameDeleteFolderRef = useRef();
+  let TableActionsRef = useRef();
   function renameDeleteModal() {
     let closeRenameDeleteModal = (e) => {
-      if (RenameDeleteRef.current != null) {
-        if (!RenameDeleteRef.current.contains(e.target)) {
+      if (RenameDeleteFolderRef.current != null) {
+        if (!RenameDeleteFolderRef.current.contains(e.target)) {
           return setRenameDeleteId("");
         }
       }
@@ -47,6 +48,19 @@ const SidebarComponents = ({ styles, setOpenRenameFolderModal }) => {
     document.addEventListener("mousedown", closeRenameDeleteModal);
     return () => {
       document.removeEventListener("mousedown", closeRenameDeleteModal);
+    };
+  }
+  function renameDeleteTableModal() {
+    let closeRenameDeleteTableModal = (e) => {
+      if (TableActionsRef.current != null) {
+        if (!TableActionsRef.current.contains(e.target)) {
+          return setopenTableActions(false);
+        }
+      }
+    };
+    document.addEventListener("mousedown", closeRenameDeleteTableModal);
+    return () => {
+      document.removeEventListener("mousedown", closeRenameDeleteTableModal);
     };
   }
 
@@ -57,6 +71,7 @@ const SidebarComponents = ({ styles, setOpenRenameFolderModal }) => {
     }
     settestExecURL(currentURL.toString().includes("test_execution"));
     renameDeleteModal();
+    renameDeleteTableModal();
   }, [tableId, currentURL]);
 
   return (
@@ -162,9 +177,9 @@ const SidebarComponents = ({ styles, setOpenRenameFolderModal }) => {
             </div>
             {/* ===============RENAME AND DELETE FOLDER=============== */}
             <div
-              // ref={RenameDeleteRef}
-              // className={`bg-gray-200 rounded-xl shadow-lg text-sm text-center ${
-              //   renameDeleteId === data?._id ? "block" : "hidden"
+              ref={RenameDeleteFolderRef}
+              // className={`bg-gray-200 rounded-xl shadow-lg text-sm text-center fixed left-56 w-44 -translate-y-4 z-50 ${
+              //   renameDelete ? "block" : "hidden"
               // }`}
               className={`bg-gray-200 rounded-xl shadow-lg text-sm text-center fixed left-56 w-44 -translate-y-4 z-50 ${
                 renameDeleteId === data?._id ? "block" : "hidden"
@@ -192,6 +207,7 @@ const SidebarComponents = ({ styles, setOpenRenameFolderModal }) => {
       })}
       {/* ===============RENAME AND DELETE TABLE=============== */}
       <div
+        ref={TableActionsRef}
         className={`bg-gray-200 rounded-xl shadow-lg text-sm text-center fixed left-56 w-40 -translate-y-4 z-50 ${
           openTableActions ? "block" : "hidden"
         }`}
