@@ -11,7 +11,6 @@ function DefaultLayout({ children }) {
   const [openAvatarDropdown, setOpenAvatarDropdown] = useState(false);
   const [openSidebar, setOpenSidebar] = useState(false);
   const [openAddFolderModal, setOpenAddFolderModal] = useState(false);
-  const [openRenameFolderModal, setopenRenameFolderModal] = useState(false);
 
   let dropDownRef = useRef();
   function userDropDown() {
@@ -57,7 +56,6 @@ function DefaultLayout({ children }) {
         <Sidebar
           styles={openSidebar ? "flex bg-themegray w-full" : "hidden"}
           setOpenAddFolderModal={() => setOpenAddFolderModal(true)}
-          setOpenRenameFolderModal={() => setopenRenameFolderModal(true)}
         />
 
         {/* ==============Navbar=============== */}

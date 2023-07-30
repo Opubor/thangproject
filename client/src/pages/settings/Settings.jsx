@@ -393,10 +393,6 @@ function Settings() {
                     );
                   }}
                 </Formik>
-
-                {/* <Link className="px-8 py-2 bg-blue-900 text-white font-semibold rounded-sm">
-                  Become an Admin
-                </Link> */}
               </div>
             }
             // ==================================

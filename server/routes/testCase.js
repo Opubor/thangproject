@@ -387,6 +387,18 @@ router.delete('/testcase/:id', async function(req, res, next) {
     }
 });
 
+// Get specific ExportData
+router.get('/exportData', async function(req,res,next){
+    try {        
+        const {tableid} = req.query
+        let exportData = await TestCase.find({testcasetable:tableid}, {status: 1,priority:1, title:1,teststep:1,precondition:1,category:1,expectations:1,description:1,results:1,assignedstaffname:1,caseid:1,_id:0}).sort({_id : 'descending'})
+        return res.json(exportData)
+    } catch (error) {
+        return res.status(401).send(error.message)
+    }
+})
+
+
 const storage = multer.diskStorage({
     destination: (req,file,cb) =>{
         cb(null,"./uploads");

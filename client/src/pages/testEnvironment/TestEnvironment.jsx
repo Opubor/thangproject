@@ -3,7 +3,6 @@ import { Formik, Field, Form, ErrorMessage, useFormik } from "formik";
 import * as Yup from "yup";
 import DefaultLayout from "../../components/DefaultLayout";
 import editpen from "../../assets/Vector (13).png";
-import deletecircle from "../../assets/delete-circle.png";
 import plusBlue from "../../assets/add-circle-blue.png";
 import { Link } from "react-router-dom";
 import axios from "../../../src/sevices/axios";

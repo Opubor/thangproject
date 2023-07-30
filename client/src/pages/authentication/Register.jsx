@@ -142,17 +142,6 @@ function Register() {
         </div>
       </div>
     </div>
-    // <div className="flex justify-center items-center h-screen bg-blue-300">
-    //   <div className="bg-white p-6 lg:rounded-md w-full md:w-9/12 lg:w-6/12 xl:w-4/12">
-    //     <div className="text-center mt-4">
-    //       <h1 className="font-bold text-2xl">Smart Testcase Management</h1>
-    //       <p>Enter your details to Register</p>
-    //     </div>
-    //     <div className="mt-6">
-    //
-    //     </div>
-    //   </div>
-    // </div>
   );
 }
 

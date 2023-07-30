@@ -19,7 +19,6 @@ export function LoginProvider({ children }) {
       setLoggedIn(false);
       localStorage.removeItem("token");
       return setUser(null);
-      // return console.log(error);
     }
   }
 

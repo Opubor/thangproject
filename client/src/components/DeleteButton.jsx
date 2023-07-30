@@ -31,10 +31,7 @@ function DeleteButton({ path, id, record, children }) {
   };
 
   return (
-    <button
-      // className="inline-flex items-center justify-center rounded-md bg-danger py-2 px-4 text-center font-medium text-white hover:bg-opacity-90 lg:px-4 xl:px-4"
-      onClick={handleDelete}
-    >
+    <button onClick={handleDelete}>
       {loading ? <ButtonPreloader /> : [children]}
     </button>
   );

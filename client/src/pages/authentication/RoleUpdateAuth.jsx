@@ -2,15 +2,10 @@ import React, { useContext, useEffect, useState } from "react";
 import { Formik, Field, Form, ErrorMessage, useFormik } from "formik";
 import * as Yup from "yup";
 import DefaultLayout from "../../components/DefaultLayout";
-import Tabs from "../../components/Tabs";
-import avatar from "../../assets/avatar (1).png";
-import arrowdown from "../../assets/arrowdown.png";
 import { loginContext } from "../../context/auth";
 import axios from "../../sevices/axios";
 import { toast } from "react-toastify";
 import ButtonPreloader from "../../components/ButtonPreloader";
-import ReactPagination from "../../components/ReactPaginate";
-import TotalNo from "../../components/TotalNo";
 import { Link, Navigate, useNavigate } from "react-router-dom";
 
 function RoleUpdateOne() {

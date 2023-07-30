@@ -15,6 +15,7 @@ var testEnvironmentRouter = require('./routes/testEnvironment');
 var folderRouter = require('./routes/folder');
 var testCaseTableRouter = require('./routes/testCaseTable');
 var testCaseRouter = require('./routes/testCase');
+var testExecutionRouter = require('./routes/testExecution');
 var forgotPasswordRouter = require('./routes/forgotPassword');
 
 var app = express();
@@ -64,6 +65,7 @@ app.use('/', testEnvironmentRouter);
 app.use('/', folderRouter);
 app.use('/', testCaseTableRouter);
 app.use('/', testCaseRouter);
+app.use('/', testExecutionRouter);
 app.use('/', forgotPasswordRouter);
 
 // catch 404 and forward to error handler
