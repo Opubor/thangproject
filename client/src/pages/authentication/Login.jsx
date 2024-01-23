@@ -21,6 +21,7 @@ function Login() {
       })
       .then((response) => {
         login(response);
+
         setLoading(false);
       })
       .catch((err) => {
